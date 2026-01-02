@@ -1,0 +1,802 @@
+[
+    {
+        "id": 1,
+        "name": "NVIDIA",
+        "category": "Semiconductors / AI",
+        "price": 4579000000000,
+        "description": "Most Valuable Company (AI Chips Leader)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/2/21/Nvidia_logo.svg"
+    },
+    {
+        "id": 2,
+        "name": "Apple",
+        "category": "Technology",
+        "price": 4010000000000,
+        "description": "Consumer Electronics Giant",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
+    },
+    {
+        "id": 3,
+        "name": "Alphabet (Google)",
+        "category": "Technology",
+        "price": 3810000000000,
+        "description": "Internet & Advertising Leader",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Google_2015_logo.svg"
+    },
+    {
+        "id": 4,
+        "name": "Microsoft",
+        "category": "Technology",
+        "price": 3620000000000,
+        "description": "Software & Cloud Computing",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
+    },
+    {
+        "id": 5,
+        "name": "Amazon",
+        "category": "E-Commerce / Cloud",
+        "price": 2430000000000,
+        "description": "Most Valuable E-Commerce Company",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg"
+    },
+    {
+        "id": 6,
+        "name": "Meta Platforms (Facebook)",
+        "category": "Social Media",
+        "price": 1680000000000,
+        "description": "Social Media & Metaverse",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/7/78/Meta_Logo.png"
+    },
+    {
+        "id": 7,
+        "name": "Broadcom",
+        "category": "Semiconductors",
+        "price": 1820000000000,
+        "description": "Semiconductor & Infrastructure",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Broadcom_logo.svg"
+    },
+    {
+        "id": 8,
+        "name": "Tesla",
+        "category": "Automobile",
+        "price": 1560000000000,
+        "description": "Electric Vehicles & Autonomy",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Tesla_Motors.svg"
+    },
+    {
+        "id": 9,
+        "name": "Taiwan Semiconductor (TSMC)",
+        "category": "Semiconductors",
+        "price": 1490000000000,
+        "description": "Most Valuable Semiconductor Foundry",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/9c/TSMC_logo.svg"
+    },
+    {
+        "id": 10,
+        "name": "Berkshire Hathaway",
+        "category": "Conglomerate",
+        "price": 1100000000000,
+        "description": "Most Valuable Conglomerate (Estimated Top 10)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Berkshire_Hathaway_logo.svg"
+    },
+    {
+        "id": 11,
+        "name": "Eli Lilly",
+        "category": "Pharmaceutical",
+        "price": 900000000000,
+        "description": "Pharma Leader (Weight-loss Drugs)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Eli_Lilly_and_Company.svg"
+    },
+    {
+        "id": 12,
+        "name": "JPMorgan Chase",
+        "category": "Financial Services",
+        "price": 850000000000,
+        "description": "Largest Bank",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/d/d4/JPMorgan_Chase.svg"
+    },
+    {
+        "id": 13,
+        "name": "Walmart",
+        "category": "Retailer",
+        "price": 700000000000,
+        "description": "Largest Retailer",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/c/ca/Walmart_logo.svg"
+    },
+    {
+        "id": 14,
+        "name": "Visa",
+        "category": "Financial Services",
+        "price": 600000000000,
+        "description": "Payment Network",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg"
+    },
+    {
+        "id": 15,
+        "name": "Mastercard",
+        "category": "Financial Services",
+        "price": 550000000000,
+        "description": "Payment Network",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Mastercard-logo.svg"
+    },
+    {
+        "id": 16,
+        "name": "Netflix",
+        "category": "Digital Media",
+        "price": 500000000000,
+        "description": "Streaming Leader",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"
+    },
+    {
+        "id": 17,
+        "name": "Oracle",
+        "category": "Software",
+        "price": 450000000000,
+        "description": "Cloud & Database",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg"
+    },
+    {
+        "id": 18,
+        "name": "Samsung",
+        "category": "Conglomerate",
+        "price": 400000000000,
+        "description": "Electronics Giant",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg"
+    },
+    {
+        "id": 19,
+        "name": "Procter & Gamble",
+        "category": "Consumer Goods",
+        "price": 380000000000,
+        "description": "Consumer Products",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/1/13/Procter_&_Gamble_logo.svg"
+    },
+    {
+        "id": 20,
+        "name": "Johnson & Johnson",
+        "category": "Pharmaceutical",
+        "price": 360000000000,
+        "description": "Healthcare",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/4/40/Johnson_and_Johnson_logo.svg"
+    },
+    {
+        "id": 21,
+        "name": "Huawei",
+        "category": "Phones",
+        "price": 1000000000000,
+        "description": "Phones (Kept from original for game balance)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Huawei_Standard_logo.svg"
+    },
+    {
+        "id": 22,
+        "name": "Dell",
+        "category": "Computer Hardware",
+        "price": 150700000000,
+        "description": "Computer Hardware",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/4/43/Dell_logo.svg"
+    },
+    {
+        "id": 23,
+        "name": "LG",
+        "category": "Electronics",
+        "price": 171600000000,
+        "description": "Electronics",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/59/LG_logo_(2015).svg"
+    },
+    {
+        "id": 24,
+        "name": "Sony",
+        "category": "Conglomerate",
+        "price": 636000000000,
+        "description": "Conglomerate",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Sony_logo.svg"
+    },
+    {
+        "id": 25,
+        "name": "Toyota",
+        "category": "Automobile",
+        "price": 2115700000000,
+        "description": "Most Valuable Automobile Company (Updated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Toyota_logo_2019.svg"
+    },
+    {
+        "id": 26,
+        "name": "Ferrari",
+        "category": "Supercars",
+        "price": 301300000000,
+        "description": "Supercars",
+        "image": "https://upload.wikimedia.org/wikipedia/en/6/67/Ferrari_logo.svg"
+    },
+    {
+        "id": 27,
+        "name": "Porsche",
+        "category": "Cars",
+        "price": 254400000000,
+        "description": "Cars",
+        "image": "https://upload.wikimedia.org/wikipedia/en/1/12/Porsche_logo.svg"
+    },
+    {
+        "id": 28,
+        "name": "BMW",
+        "category": "Cars",
+        "price": 683300000000,
+        "description": "Cars",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/4/44/BMW.svg"
+    },
+    {
+        "id": 29,
+        "name": "Mercedes (Daimler)",
+        "category": "Cars",
+        "price": 600000000000,
+        "description": "Luxury Cars (Estimated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/90/Mercedes-Benz_Star_2022.svg"
+    },
+    {
+        "id": 30,
+        "name": "McDonald's",
+        "category": "Fast Food",
+        "price": 1214800000000,
+        "description": "Most Valuable Fast Food Company (Updated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/3/36/McDonald%27s_Golden_Arches.svg"
+    },
+    {
+        "id": 31,
+        "name": "Starbucks",
+        "category": "Beverage",
+        "price": 801600000000,
+        "description": "Beverage",
+        "image": "https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg"
+    },
+    {
+        "id": 32,
+        "name": "Coca Cola",
+        "category": "Beverages",
+        "price": 1860400000000,
+        "description": "Most Valuable Beverage Company (Updated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Coca-Cola_logo.svg"
+    },
+    {
+        "id": 33,
+        "name": "PepsiCo",
+        "category": "Beverages",
+        "price": 1559000000000,
+        "description": "Beverages",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Pepsi_logo_2023.svg"
+    },
+    {
+        "id": 34,
+        "name": "Nestle",
+        "category": "Food",
+        "price": 2387100000000,
+        "description": "Most Valuable Food Company (Updated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/4/47/Nestl%C3%A9.svg"
+    },
+    {
+        "id": 35,
+        "name": "Unilever",
+        "category": "Consumer Goods",
+        "price": 1554600000000,
+        "description": "Consumer Goods",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Unilever_logo.svg"
+    },
+    {
+        "id": 36,
+        "name": "LVMH",
+        "category": "Luxury Products",
+        "price": 1513600000000,
+        "description": "Most Valuable Luxury Goods Company (Updated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/6/6f/LVMH_logo.svg"
+    },
+    {
+        "id": 37,
+        "name": "Hermes",
+        "category": "Luxury Products",
+        "price": 576800000000,
+        "description": "Luxury Products",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Herm%C3%A8s_logo.svg"
+    },
+    {
+        "id": 38,
+        "name": "Nike",
+        "category": "Sportswear",
+        "price": 1046900000000,
+        "description": "Most Valuable Sports Company (Updated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+    },
+    {
+        "id": 39,
+        "name": "Adidas",
+        "category": "Sportswear",
+        "price": 452500000000,
+        "description": "Sportswear",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Adidas_Logo.svg"
+    },
+    {
+        "id": 40,
+        "name": "Disney",
+        "category": "Entertainment",
+        "price": 1559600000000,
+        "description": "Most Valuable Media Company (Updated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Disney_wordmark.svg"
+    },
+    {
+        "id": 41,
+        "name": "Netflix",
+        "category": "Digital Media",
+        "price": 1393700000000,
+        "description": "Digital Media (Updated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"
+    },
+    {
+        "id": 42,
+        "name": "Nintendo",
+        "category": "Video Games",
+        "price": 617100000000,
+        "description": "Most Valuable Game Company",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Nintendo.svg"
+    },
+    {
+        "id": 43,
+        "name": "Electronic Arts",
+        "category": "Gaming",
+        "price": 382000000000,
+        "description": "Gaming",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/9a/EA_logo_2020.svg"
+    },
+    {
+        "id": 44,
+        "name": "Hasbro",
+        "category": "Toys",
+        "price": 119400000000,
+        "description": "Most Valuable Toy Company",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Hasbro_logo.svg"
+    },
+    {
+        "id": 45,
+        "name": "Mattel",
+        "category": "Toys",
+        "price": 56500000000,
+        "description": "Toys",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/0/0e/Mattel_logo.svg"
+    },
+    {
+        "id": 46,
+        "name": "L'Oreal",
+        "category": "Cosmetics",
+        "price": 1238200000000,
+        "description": "Cosmetics",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/5f/L%27Or%C3%A9al_Logo.svg"
+    },
+    {
+        "id": 47,
+        "name": "Estee Lauder",
+        "category": "Cosmetics",
+        "price": 527400000000,
+        "description": "Cosmetics",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Est%C3%A9e_Lauder_Companies.svg"
+    },
+    {
+        "id": 48,
+        "name": "Marriott",
+        "category": "Hotels",
+        "price": 507600000000,
+        "description": "Most Valuable Hotel Chain",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/1/18/Marriott_Logo.svg"
+    },
+    {
+        "id": 49,
+        "name": "Royal Caribbean",
+        "category": "Cruises",
+        "price": 264600000000,
+        "description": "Most Valuable Cruise Company",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Royal_Caribbean_International_logo.svg"
+    },
+    {
+        "id": 50,
+        "name": "Expedia",
+        "category": "Travel",
+        "price": 164900000000,
+        "description": "Travel",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/6/69/Expedia_2023_logo.svg"
+    },
+    {
+        "id": 51,
+        "name": "Ford",
+        "category": "Cars",
+        "price": 422400000000,
+        "description": "Cars",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Ford_logo_flat.svg"
+    },
+    {
+        "id": 52,
+        "name": "General Motors",
+        "category": "Automobile",
+        "price": 538800000000,
+        "description": "Automobile",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/9f/General_Motors_2021.svg"
+    },
+    {
+        "id": 53,
+        "name": "Honda",
+        "category": "Cars",
+        "price": 621000000000,
+        "description": "Cars",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Honda.svg"
+    },
+    {
+        "id": 54,
+        "name": "Volkswagen",
+        "category": "Automobile",
+        "price": 983300000000,
+        "description": "Automobile",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Volkswagen_logo_2019.svg"
+    },
+    {
+        "id": 55,
+        "name": "Rolls Royce",
+        "category": "Luxury Cars",
+        "price": 199000000000,
+        "description": "Luxury Cars",
+        "image": "https://upload.wikimedia.org/wikipedia/en/b/b3/Rolls-Royce_Motor_Cars_logo.svg"
+    },
+    {
+        "id": 56,
+        "name": "Harley Davidson",
+        "category": "Motorbikes",
+        "price": 74700000000,
+        "description": "Motorbikes",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Harley-Davidson_logo.svg"
+    },
+    {
+        "id": 57,
+        "name": "Yamaha",
+        "category": "Musical Instruments",
+        "price": 91200000000,
+        "description": "Musical Instruments",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Yamaha_logo.svg"
+    },
+    {
+        "id": 58,
+        "name": "Prada",
+        "category": "Luxury Accessories",
+        "price": 104500000000,
+        "description": "Luxury Accessories",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Prada_logo.svg"
+    },
+    {
+        "id": 59,
+        "name": "Tiffany & Co",
+        "category": "Jewellery",
+        "price": 126000000000,
+        "description": "Jewellery",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Tiffany_%26_Co._logo.svg"
+    },
+    {
+        "id": 60,
+        "name": "H&M",
+        "category": "Apparel",
+        "price": 242300000000,
+        "description": "Apparel",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/5d/H%26M-Logo.svg"
+    },
+    {
+        "id": 61,
+        "name": "Gap",
+        "category": "Apparel",
+        "price": 134500000000,
+        "description": "Apparel",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/6/69/Gap_logo.svg"
+    },
+    {
+        "id": 62,
+        "name": "Tesco",
+        "category": "Groceries",
+        "price": 241000000000,
+        "description": "Groceries",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Tesco_Logo.svg"
+    },
+    {
+        "id": 63,
+        "name": "Kellogg",
+        "category": "Cereals",
+        "price": 241500000000,
+        "description": "Cereals",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Kellogg%27s-Logo.svg"
+    },
+    {
+        "id": 64,
+        "name": "Hershey",
+        "category": "Chocolate",
+        "price": 209400000000,
+        "description": "Chocolate",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/58/Hershey%27s_logo.svg"
+    },
+    {
+        "id": 65,
+        "name": "Carlsberg",
+        "category": "Beer",
+        "price": 183400000000,
+        "description": "Beer",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Carlsberg_Group_logo.svg"
+    },
+    {
+        "id": 66,
+        "name": "Heineken",
+        "category": "Alcohol",
+        "price": 604800000000,
+        "description": "Alcohol",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Heineken_logo.svg"
+    },
+    {
+        "id": 67,
+        "name": "Anheuser-Busch InBev",
+        "category": "Brewing",
+        "price": 1806600000000,
+        "description": "Most Valuable Brewing Company (Updated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Anheuser-Busch_InBev_Logo.svg"
+    },
+    {
+        "id": 68,
+        "name": "Colgate",
+        "category": "Toothpaste",
+        "price": 609900000000,
+        "description": "Toothpaste",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Colgate_logo.svg"
+    },
+    {
+        "id": 69,
+        "name": "Clorox",
+        "category": "Cleaning Products",
+        "price": 171200000000,
+        "description": "Cleaning Products",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Clorox_Logo.svg"
+    },
+    {
+        "id": 70,
+        "name": "Del Monte",
+        "category": "Food",
+        "price": 163000000000,
+        "description": "Food",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Del_Monte_logo.svg"
+    },
+    {
+        "id": 71,
+        "name": "Canon",
+        "category": "Cameras",
+        "price": 486700000000,
+        "description": "Cameras",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/3/31/Canon_logo.svg"
+    },
+    {
+        "id": 72,
+        "name": "Xerox",
+        "category": "Printers",
+        "price": 76500000000,
+        "description": "Printers",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Xerox_logo.svg"
+    },
+    {
+        "id": 73,
+        "name": "Panasonic",
+        "category": "Electronics",
+        "price": 373000000000,
+        "description": "Electronics",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Panasonic_logo_(Blue).svg"
+    },
+    {
+        "id": 74,
+        "name": "Toshiba",
+        "category": "Electronics",
+        "price": 189000000000,
+        "description": "Electronics",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/2/20/Toshiba_logo.svg"
+    },
+    {
+        "id": 75,
+        "name": "Sharp",
+        "category": "Electronic Appliances",
+        "price": 160500000000,
+        "description": "Electronic Appliances",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Logo_of_the_Sharp_Corporation.svg"
+    },
+    {
+        "id": 76,
+        "name": "Acer",
+        "category": "Computer Hardware",
+        "price": 28200000000,
+        "description": "Computer Hardware",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Acer_2011.svg"
+    },
+    {
+        "id": 77,
+        "name": "Motorola",
+        "category": "Telecommunications",
+        "price": 174800000000,
+        "description": "Telecommunications",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Motorola_new_logo.svg"
+    },
+    {
+        "id": 78,
+        "name": "Nokia",
+        "category": "Phones",
+        "price": 331900000000,
+        "description": "Phones",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/8/81/Nokia_2023.svg"
+    },
+    {
+        "id": 79,
+        "name": "Snapchat (Snap)",
+        "category": "Social Media",
+        "price": 216900000000,
+        "description": "Social Media",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Snapchat_logo.svg"
+    },
+    {
+        "id": 80,
+        "name": "eBay",
+        "category": "E-Commerce",
+        "price": 436600000000,
+        "description": "E-Commerce",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/1/1b/EBay_logo.svg"
+    },
+    {
+        "id": 81,
+        "name": "PayPal",
+        "category": "Online Financial Services",
+        "price": 950500000000,
+        "description": "Online Financial Services",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+    },
+    {
+        "id": 82,
+        "name": "Salesforce",
+        "category": "Cloud Computing",
+        "price": 905300000000,
+        "description": "Cloud Computing",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg"
+    },
+    {
+        "id": 83,
+        "name": "Adobe",
+        "category": "Software",
+        "price": 1069800000000,
+        "description": "Software Programmes",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Adobe_Corporate_logo.svg"
+    },
+    {
+        "id": 84,
+        "name": "Autodesk",
+        "category": "3D Software",
+        "price": 264000000000,
+        "description": "3D Software",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Autodesk_logo.svg"
+    },
+    {
+        "id": 85,
+        "name": "FedEx",
+        "category": "Delivery Services",
+        "price": 647400000000,
+        "description": "Delivery Services",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/5f/FedEx_Express_logo.svg"
+    },
+    {
+        "id": 86,
+        "name": "United Airlines",
+        "category": "Airlines",
+        "price": 200000000000,
+        "description": "Airlines",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/4/49/United_Airlines_Logo_-_2019.svg"
+    },
+    {
+        "id": 87,
+        "name": "Delta Airlines",
+        "category": "Airline",
+        "price": 380600000000,
+        "description": "Airline",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/7/78/Delta_logo.svg"
+    },
+    {
+        "id": 88,
+        "name": "Boeing",
+        "category": "Aircraft",
+        "price": 2042300000000,
+        "description": "Most Valuable Aircraft Company (Updated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/6/67/Boeing_full_logo.svg"
+    },
+    {
+        "id": 89,
+        "name": "Airbus",
+        "category": "Aircrafts",
+        "price": 969600000000,
+        "description": "Aircrafts",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Airbus_Logo_2017.png"
+    },
+    {
+        "id": 90,
+        "name": "Lockheed Martin",
+        "category": "Defence",
+        "price": 977200000000,
+        "description": "Defence",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Lockheed_Martin_logo.svg"
+    },
+    {
+        "id": 91,
+        "name": "Caterpillar",
+        "category": "Construction Equipment",
+        "price": 905500000000,
+        "description": "Most Valuable Construction Manufacturer",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Caterpillar_logo.svg"
+    },
+    {
+        "id": 92,
+        "name": "Bridgestone",
+        "category": "Tires",
+        "price": 328900000000,
+        "description": "Tires",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Bridgestone_logo.svg"
+    },
+    {
+        "id": 93,
+        "name": "ArcelorMittal",
+        "category": "Steel",
+        "price": 330600000000,
+        "description": "Most Valuable Steel Producer",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/3/3f/ArcelorMittal_logo.svg"
+    },
+    {
+        "id": 94,
+        "name": "BHP",
+        "category": "Mining",
+        "price": 1125100000000,
+        "description": "Most Valuable Mining Company (Updated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/9a/BHP_logo.svg"
+    },
+    {
+        "id": 95,
+        "name": "Exxon Mobil",
+        "category": "Oil",
+        "price": 3186600000000,
+        "description": "Most Valuable Public Oil Company (Updated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Exxon_Mobil_Logo.svg"
+    },
+    {
+        "id": 96,
+        "name": "Shell",
+        "category": "Oil",
+        "price": 2716200000000,
+        "description": "Oil (Updated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Shell_logo.svg"
+    },
+    {
+        "id": 97,
+        "name": "Chevron",
+        "category": "Oil",
+        "price": 2176000000000,
+        "description": "Oil",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/1/11/Chevron_Logo.svg"
+    },
+    {
+        "id": 98,
+        "name": "BP",
+        "category": "Oil",
+        "price": 1305500000000,
+        "description": "Oil",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/0/0d/BP_Helios_logo.svg"
+    },
+    {
+        "id": 99,
+        "name": "BASF",
+        "category": "Chemicals",
+        "price": 958200000000,
+        "description": "The Chemical Company",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/4/4a/BASF-Logo_bw.svg"
+    },
+    {
+        "id": 100,
+        "name": "DowDuPont",
+        "category": "Chemicals",
+        "price": 1634300000000,
+        "description": "Most Valuable Chemical Company (Updated)",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Dow_Chemical_Company_logo.svg"
+    }
+]

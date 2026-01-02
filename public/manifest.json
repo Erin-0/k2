@@ -1,0 +1,22 @@
+{
+  "name": "K2_SOV | الشبكة العصبية السيادية",
+  "short_name": "K2_SOV",
+  "description": "منصة المحاكاة الاقتصادية والحروب السيبرانية الأكثر تقدماً. سيطر على الشركات، استولِ على الأراضي، وارتقِ في الشبكة العصبية العالمية.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#03040b",
+  "theme_color": "#6366f1",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/og-image.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
