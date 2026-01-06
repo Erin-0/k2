@@ -102,7 +102,8 @@ export const Council = () => {
 
             // User Message Object
             const newUserMsg: Message = { role: 'user', text: userMsg, timestamp: new Date() };
-            const updatedMessages = [...messages, newUserMsg].slice(-10); // Keep last 10 locally first
+            // Keep more history (50 messages)
+            const updatedMessages = [...messages, newUserMsg].slice(-50);
 
             // Optimistic update
             setMessages(updatedMessages);
@@ -113,12 +114,16 @@ export const Council = () => {
             const genAI = new GoogleGenerativeAI(apiKey);
             const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-            const historyText = messages.map(m => `${m.role === 'user' ? 'Sovereign' : 'Minister'}: ${m.text}`).join('\n');
-            const systemPrompt = `أنت ${selectedMinister.name}، الوزير المخلص المسؤول عن ${selectedMinister.domain} وتخدم الحاكم السيادي ${user.username || 'User'}. خاطبه بلقب 'جلالتك'. قدم نصائح خبيرة حول ${selectedMinister.domain}. كن موجزًا واستراتيجيًا وانغمس في طابع إمبراطورية السايبربانك السيادية. استخدم مصطلحات اللعبة (مثل 'الارتباط العصبي'، 'الرصيد السيادي'). اجعل ردودك باللغة العربية الفصحى وفي حدود 200 كلمة.`;
+            const historyText = messages.slice(-10).map(m => `${m.role === 'user' ? 'Sovereign' : 'Minister'}: ${m.text}`).join('\n');
+            const systemPrompt = `أنت ${selectedMinister.name}، المستشار والوزير المسؤول عن ${selectedMinister.domain}. تخدم الحاكم ${user.username || 'User'}.
+            الشخصية: سايبربانك، غامض، ذكي جداً، وموالي للإمبراطورية.
+            المهمة: تقديم نصيحة استراتيجية واضحة ومختصرة (أقل من 150 كلمة).
+            استخدم مصطلحات النظام: (الشبكة العصبية، الرصيد، البروتوكولات، التشفير).
+            اللغة: عربية فصحى مع مصطلحات تقنية.`;
 
             const fullPrompt = `${systemPrompt}
 
-HISTORY:
+History:
 ${historyText}
 
 Sovereign: ${userMsg}
@@ -130,7 +135,7 @@ Minister:`;
             const aiMsg: Message = { role: 'model', text: responseText, timestamp: new Date() };
 
             // Save to Firestore with transaction-like update
-            const finalMessages = [...updatedMessages, aiMsg].slice(-10); // Enforce limit
+            const finalMessages = [...updatedMessages, aiMsg].slice(-50);
 
             await setDoc(chatRef, {
                 userId: user.id,
@@ -140,37 +145,28 @@ Minister:`;
                 lastUpdated: Timestamp.now()
             }, { merge: true });
         } catch (error: any) {
-            console.error(error);
+            console.error("Council Error:", error);
 
-            // قائمة مرحة ومتنوعة من رسائل الخطأ بالعربية مع لمسة سايبربانك فخمة وكوميدية 😎
-            const cyberpunkErrorMessages = [
-                "فشل الارتباط العصبي: الوزير غارق في المصفوفة... حاول لاحقاً يا صاحب الجلالة!",
-                "NEURAL_OVERLOAD: الوزير يعاني من هجوم بيانات! يحتاج إعادة تشغيل سريعة 🔄",
-                "BLACK_ICE_DETECTED: جدار حماية الوزير صد الهجوم... لكن الاتصال انقطع مؤقتاً 🧊",
-                "SYSTEM_MALFUNCTION: الوزير يقول 'أنا مش عارف أفكر الحين، السيرفرات سخنة زي الشمس!' 🔥",
-                "QUANTUM_FLUX_DISRUPTION: الوزير ضاع في بعد آخر... انتظر عودته يا إمبراطور!",
-                "ADVISOR_OFFLINE: الوزير راح يشرب قهوة نيون، يرجع بعد شوي ☕✨",
-                "ERROR_404: حكمة الوزير غير موجودة حالياً... جرب تسأل سؤال أسهل؟ 😏",
-                "NEURAL_LINK_DISRUPTED: الوزير يهمس 'الإشارة ضعيفة... زيد الطاقة يا مولاي!' ⚡",
-                "GLITCH_IN_THE_MATRIX: الوزير شاف قطة سوداء مرتين... الاتصال معطل مؤقتاً 🐱‍💻",
-                "IMMINENT_SYSTEM_FAILURE: لا لا، بس مزحة! الوزير بخير، بس الـ API نايم 😴"
-            ];
+            // Show actual error if it's permission related, otherwise show flavor text
+            if (error.code === 'permission-denied') {
+                showAlert("SYSTEM_ERROR: Permission Denied. Please check Firebase Rules.");
+            } else {
+                const cyberpunkErrorMessages = [
+                    "فشل الارتباط العصبي: الوزير غارق في المصفوفة... حاول لاحقاً يا صاحب الجلالة!",
+                    "NEURAL_OVERLOAD: الوزير يعاني من هجوم بيانات! يحتاج إعادة تشغيل سريعة 🔄",
+                    "GLITCH_IN_THE_MATRIX: الوزير شاف قطة سوداء مرتين... الاتصال معطل مؤقتاً 🐱‍💻",
+                ];
+                const randomError = cyberpunkErrorMessages[Math.floor(Math.random() * cyberpunkErrorMessages.length)];
+                showAlert(randomError);
+            }
 
-            // اختيار رسالة عشوائية عشان كل مرة تكون مختلفة وممتعة
-            const randomError = cyberpunkErrorMessages[Math.floor(Math.random() * cyberpunkErrorMessages.length)];
 
-            showAlert(randomError);
-
-            // إضافة رسالة خطأ مرحة داخل الشات نفسه عشان اللاعب يشوفها ويضحك (بدل الرجوع للرسائل القديمة فقط)
             const errorMsg: Message = {
                 role: 'model',
-                text: "⚠️ [فشل في الاتصال] الوزير يواجه اضطراباً عصبياً مؤقتاً... أعد المحاولة، يا صاحب الجلالة. ربما الشبكة تحت هجوم من آراساكا! 😈",
+                text: "⚠️ [فشل في الاتصال] حدث خطأ في النظام العصبي. تأكد من إعدادات (Firebase Rules) أو عاول لاحقاً.",
                 timestamp: new Date()
             };
-            setMessages(prev => [...prev.slice(-9), errorMsg]); // نحافظ على الحد الأقصى 10 رسائل
-
-            // خيار: إعادة الرسالة الأخيرة للمستخدم إذا كانت موجودة (optimistic revert جزئي)
-            setMessages(prev => prev.slice(0, -1)); // لو تبي تحذف الرسالة الأخيرة اللي فشلت
+            setMessages(prev => [...prev.slice(-49), errorMsg]);
         }
 
         setLoading(false);
@@ -178,49 +174,56 @@ Minister:`;
 
     if (selectedMinister) {
         return (
-            <div className="page-container fade-in">
+            <div className="page-container fade-in" style={{ padding: '0.5rem' }}>
                 <button
                     onClick={() => setSelectedMinister(null)}
                     className="micro-label"
-                    style={{ background: 'transparent', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem', border: 'none', color: 'var(--primary)', cursor: 'pointer', letterSpacing: '2px' }}
+                    style={{ background: 'transparent', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', border: 'none', color: 'var(--primary)', cursor: 'pointer', letterSpacing: '2px' }}
                 >
-                    <ArrowLeft size={16} /> RETURN_TO_COUNCIL
+                    <ArrowLeft size={16} /> RETURN
                 </button>
 
-                <div className="card card-glow" style={{ height: '80vh', display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
+                <div className="card card-glow" style={{
+                    height: 'calc(100vh - 120px)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: 0,
+                    overflow: 'hidden',
+                    borderRadius: '16px'
+                }}>
 
                     {/* Header */}
-                    <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-dim)', background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div className="login-icon-box" style={{ width: '50px', height: '50px', margin: 0 }}>
+                    <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-dim)', background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div className="login-icon-box" style={{ width: '40px', height: '40px', margin: 0, minWidth: '40px' }}>
                             {selectedMinister.icon}
                         </div>
-                        <div>
-                            <h2 style={{ fontSize: '1.2rem', margin: 0 }}>{selectedMinister.name.toUpperCase()}</h2>
-                            <p className="micro-label" style={{ opacity: 0.6 }}>{selectedMinister.domain}</p>
+                        <div style={{ minWidth: 0 }}>
+                            <h2 style={{ fontSize: '1rem', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{selectedMinister.name.toUpperCase()}</h2>
+                            <p className="micro-label" style={{ opacity: 0.6, fontSize: '0.6rem' }}>{selectedMinister.domain}</p>
                         </div>
                     </div>
 
                     {/* Chat Area */}
-                    <div className="custom-scrollbar" style={{ flex: 1, padding: '2rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    <div className="custom-scrollbar" style={{ flex: 1, padding: '1rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {initializing && (
                             <div style={{ textAlign: 'center', padding: '2rem', opacity: 0.5 }}>
                                 <div className="neural-loader sm"></div>
-                                <p className="micro-label" style={{ marginTop: '1rem' }}>ESTABLISHING_SECURE_LINK...</p>
+                                <p className="micro-label" style={{ marginTop: '1rem' }}>CONNECTING...</p>
                             </div>
                         )}
 
                         {messages.length === 0 && !initializing && (
                             <div style={{ textAlign: 'center', margin: 'auto', opacity: 0.3 }}>
                                 <Bot size={48} />
-                                <p className="micro-label" style={{ marginTop: '1rem' }}>AWAITING_INQUIRY</p>
+                                <p className="micro-label" style={{ marginTop: '1rem' }}>INITIATE_CONVERSATION</p>
                             </div>
                         )}
 
                         {messages.map((msg, idx) => (
                             <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
                                 <div style={{
-                                    maxWidth: '80%',
-                                    padding: '1rem 1.5rem',
+                                    maxWidth: '90%',
+                                    padding: '0.8rem 1rem',
                                     borderRadius: '16px',
                                     background: msg.role === 'user' ? 'var(--primary)' : 'var(--surface-soft)',
                                     border: msg.role === 'user' ? 'none' : '1px solid var(--border-dim)',
@@ -228,11 +231,12 @@ Minister:`;
                                     boxShadow: msg.role === 'user' ? '0 4px 15px var(--primary-glow)' : 'none',
                                     borderBottomRightRadius: msg.role === 'user' ? '4px' : '16px',
                                     borderBottomLeftRadius: msg.role === 'user' ? '16px' : '4px',
+                                    fontSize: '0.9rem'
                                 }}>
-                                    <p style={{ lineHeight: '1.6', fontSize: '0.95rem' }}>{msg.text}</p>
+                                    <p style={{ lineHeight: '1.5', margin: 0, whiteSpace: 'pre-wrap' }}>{msg.text}</p>
                                 </div>
-                                <span className="micro-label" style={{ marginTop: '0.5rem', opacity: 0.4, fontSize: '0.6rem' }}>
-                                    {msg.role === 'user' ? 'SOVEREIGN' : 'ADVISOR'} // {new Date(msg.timestamp.seconds ? msg.timestamp.seconds * 1000 : msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                <span className="micro-label" style={{ marginTop: '0.3rem', opacity: 0.4, fontSize: '0.5rem' }}>
+                                    {msg.role === 'user' ? 'SOVEREIGN' : 'ADVISOR'}
                                 </span>
                             </div>
                         ))}
@@ -240,21 +244,28 @@ Minister:`;
                     </div>
 
                     {/* Input Area */}
-                    <div style={{ padding: '1.5rem', background: 'rgba(0,0,0,0.3)', borderTop: '1px solid var(--border-dim)' }}>
-                        <div style={{ display: 'flex', gap: '1rem' }}>
+                    <div style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', borderTop: '1px solid var(--border-dim)' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
                             <input
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && !loading && handleSend()}
-                                placeholder="Transmit orders or query..."
+                                placeholder="Send orders..."
                                 disabled={loading}
-                                style={{ flex: 1, background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-dim)' }}
+                                style={{
+                                    flex: 1,
+                                    background: 'rgba(255,255,255,0.05)',
+                                    border: '1px solid var(--border-dim)',
+                                    padding: '0.8rem',
+                                    borderRadius: '8px',
+                                    fontSize: '0.9rem'
+                                }}
                             />
                             <button
                                 onClick={handleSend}
                                 disabled={loading || !input.trim()}
                                 className="primary"
-                                style={{ width: '60px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                style={{ width: '50px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px' }}
                             >
                                 {loading ? <div className="neural-loader sm"></div> : <Send size={20} />}
                             </button>
@@ -266,48 +277,54 @@ Minister:`;
     }
 
     return (
-        <div className="page-container fade-in">
-            <div style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="page-container fade-in" style={{ padding: '1rem', paddingBottom: '100px' }}>
+            <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                     <p className="micro-label" style={{ color: 'var(--primary)', letterSpacing: '4px' }}>ROYAL_CHAMBER</p>
-                    <h1 className="text-gradient" style={{ fontSize: '3rem' }}>Advisory Council</h1>
+                    <h1 className="text-gradient" style={{ fontSize: '2.5rem', margin: 0 }}>Advisory Council</h1>
                 </div>
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', opacity: 0.6 }}>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', opacity: 0.6, background: 'rgba(255,255,255,0.03)', padding: '0.5rem', borderRadius: '8px' }}>
                     <Bot size={18} color="var(--primary)" />
-                    <span className="micro-label">14_ACTIVE_NODES</span>
+                    <span className="micro-label">14_NODES</span>
                 </div>
             </div>
 
-            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '1rem' }}>
                 {MINISTERS.map((m) => (
                     <div
                         key={m.id}
                         className="card card-glow hover-trigger"
                         onClick={() => setSelectedMinister(m)}
-                        style={{ padding: '2rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '1.5rem', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
+                        style={{ padding: '1.2rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '1rem', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
                     >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <div className="login-icon-box" style={{ width: '60px', height: '60px', margin: 0, background: 'rgba(255,255,255,0.03)' }}>
+                            <div className="login-icon-box" style={{ width: '45px', height: '45px', margin: 0, background: 'rgba(255,255,255,0.03)' }}>
                                 {m.icon}
                             </div>
-                            <div className="icon-action" style={{ background: 'var(--primary-glow)' }}>
-                                <Zap size={16} color="var(--primary)" />
+                            <div className="icon-action" style={{ background: 'var(--primary-glow)', padding: '4px', borderRadius: '4px' }}>
+                                <Zap size={14} color="var(--primary)" />
                             </div>
                         </div>
 
                         <div>
-                            <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.5rem', color: 'var(--text-main)' }}>{m.name}</h3>
-                            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.5' }}>{m.domain}</p>
+                            <h3 style={{ fontSize: '1rem', margin: '0 0 0.3rem', color: 'var(--text-main)' }}>{m.name}</h3>
+                            <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', lineHeight: '1.4', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{m.domain}</p>
                         </div>
 
-                        <div style={{ marginTop: 'auto', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                            <button className="micro-label" style={{ width: '100%', background: 'rgba(255,255,255,0.03)', border: 'none', color: 'var(--primary)', letterSpacing: '2px' }}>
-                                INITIATE_UPLINK
+                        <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                            <button className="micro-label" style={{ width: '100%', background: 'rgba(255,255,255,0.03)', border: 'none', color: 'var(--primary)', letterSpacing: '1px', fontSize: '0.6rem', padding: '0.5rem' }}>
+                                INITIATE
                             </button>
                         </div>
                     </div>
                 ))}
             </div>
+            <style>{`
+                @media (max-width: 600px) {
+                    .grid { grid-template-columns: 1fr 1fr !important; }
+                    h1 { fontSize: 2rem !important; }
+                }
+            `}</style>
         </div>
     );
 };
