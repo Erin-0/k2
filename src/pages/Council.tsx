@@ -10,6 +10,8 @@ import {
     MessageSquare, Zap, Send, ArrowLeft, Bot
 } from 'lucide-react';
 import { useTerminal } from '../context/TerminalContext';
+import companiesData from '../data/companys.json';
+import { formatNeuralCurrency } from '../utils/formatters';
 
 const MINISTERS = [
     { id: 'home', name: 'وزير الدولة', domain: 'لوحة القيادة الرئيسية، صافي الثروة، قائمة المتصدرين، الأنشطة، عدد الأراضي.', icon: <Cpu size={32} /> },
@@ -94,7 +96,8 @@ export const Council = () => {
                 }
             }
 
-            if (dailyCount >= 10) {
+            // Increased limit to 50
+            if (dailyCount >= 50) {
                 showAlert("RATE_LIMIT_EXCEEDED: Minister capacity reached for today. Try again tomorrow.");
                 setLoading(false);
                 return;
@@ -115,10 +118,41 @@ export const Council = () => {
             const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
             const historyText = messages.slice(-10).map(m => `${m.role === 'user' ? 'Sovereign' : 'Minister'}: ${m.text}`).join('\n');
+
+            // --- CONTEXT INJECTION START ---
+            let specificContext = "";
+
+            if (selectedMinister.id === 'companies') {
+                const userBalance = formatNeuralCurrency(user.balance || 0);
+                const ownedCompNames = user.ownedCompanies?.map((c: any) => c.name).join(", ") || "None";
+
+                // Create a simplified market list (Name: Price) to save tokens but provide full data
+                const marketList = companiesData.map((c: any) => `- ${c.name}: ${formatNeuralCurrency(c.price)}`).join("\n");
+
+                specificContext = `
+                [SECRET CLASSIFIED DATA FOR MINISTER EYES ONLY]
+                CURRENT SOVEREIGN ASSETS:
+                - Balance: ${userBalance}
+                - Owned Corporations: ${ownedCompNames}
+
+                GLOBAL MARKET DATA (Stock Exchange):
+                ${marketList}
+
+                INSTRUCTIONS:
+                - Use this data to recommend affordable companies based on the Sovereign's specific balance.
+                - If the Sovereign asks "what can I buy?", analyze the list and suggest the best options under their current balance.
+                - Do NOT list all companies, only relevant ones.
+                [END DATA]
+                `;
+            }
+            // --- CONTEXT INJECTION END ---
+
             const systemPrompt = `أنت ${selectedMinister.name}، المستشار والوزير المسؤول عن ${selectedMinister.domain}. تخدم الحاكم ${user.username || 'User'}.
             الشخصية: سايبربانك، غامض، ذكي جداً، وموالي للإمبراطورية.
+
+            ${specificContext}
+
             المهمة: تقديم نصيحة استراتيجية واضحة ومختصرة (أقل من 150 كلمة).
-            استخدم مصطلحات النظام: (الشبكة العصبية، الرصيد، البروتوكولات، التشفير).
             اللغة: عربية فصحى مع مصطلحات تقنية.`;
 
             const fullPrompt = `${systemPrompt}
