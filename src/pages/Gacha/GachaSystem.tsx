@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Groq from 'groq-sdk';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../firebase';
 import {
@@ -45,6 +46,8 @@ interface ChatMessage {
     content: string;
     timestamp: Date;
 }
+
+const GROQ_API_KEY = "REPLACE_WITH_YOUR_KEY_HERE"; // 
 
 export const GachaSystem = () => {
     const { user, refreshUser } = useAuth();
@@ -294,7 +297,7 @@ export const GachaSystem = () => {
         }, 'confirm');
     };
 
-    const handleSendMessage = () => {
+    const handleSendMessage = async () => {
         if (!chatInput.trim() || !selectedAgentId) return;
 
         const selectedAgent = agents.find(a => a.id === selectedAgentId);
@@ -305,26 +308,54 @@ export const GachaSystem = () => {
         setChatInput('');
         setIsTyping(true);
 
-        // AI Simulation
-        setTimeout(() => {
-            const personalitySplit = selectedAgent.personality.split('،');
-            const personalityPrefix = personalitySplit[0];
-            const responses = [
-                `${personalityPrefix}... لقد استلمت رسالتك. كوني ${selectedAgent.title}، أجد أن اهتمامك بـ "${userMsg.content}" يعكس طموحاً استراتيجياً.`,
-                `*نظام الاتصال مشفر* ${selectedAgent.name} هنا. ${selectedAgent.personality}. بخصوص ما ذكرت، الكفاءة هي القيمة الوحيدة التي أعترف بها.`,
-                `لقد قمت بتحليل طلبك. ${selectedAgent.desc.substring(0, 30)}... أرى فرصاً في هذا المسار.`,
-                `هل تعتقد أن "${userMsg.content}" سيغير موازين القوى؟ ${personalityPrefix}. لقد رأيت الكثير من المحاولات المشابهة.`
-            ];
+        try {
+            const client = new Groq({ apiKey: GROQ_API_KEY, dangerouslyAllowBrowser: true });
 
-            const botMsg: ChatMessage = {
-                role: 'agent',
-                content: responses[Math.floor(Math.random() * responses.length)],
-                timestamp: new Date()
-            };
+            const completion = await client.chat.completions.create({
+                model: "openai/gpt-oss-120b", // Custom model as requested
+                messages: [
+                    {
+                        role: "system",
+                        content: `You are ${selectedAgent.name}, also known as ${selectedAgent.title}. 
+                        Your personality: ${selectedAgent.personality}.
+                        Your background: ${selectedAgent.desc}.
+                        Respond to the user as this character. Keep responses concise and immersive.`
+                    },
+                    {
+                        role: "user",
+                        content: userMsg.content
+                    }
+                ],
+                temperature: 1,
+                max_tokens: 8192,
+                top_p: 1,
+                stream: true,
+                stop: null
+            });
 
+            let fullResponse = "";
+            const botMsg: ChatMessage = { role: 'agent', content: '', timestamp: new Date() };
             setChatMessages(prev => [...prev, botMsg]);
+
+            for await (const chunk of completion) {
+                const content = chunk.choices[0]?.delta?.content || "";
+                fullResponse += content;
+                setChatMessages(prev => {
+                    const newHistory = [...prev];
+                    newHistory[newHistory.length - 1].content = fullResponse;
+                    return newHistory;
+                });
+            }
+        } catch (e) {
+            console.error("AI Error:", e);
+            setChatMessages(prev => [...prev, {
+                role: 'agent',
+                content: "*خطأ في الاتصال العصبي... إعادة التوجيه*",
+                timestamp: new Date()
+            }]);
+        } finally {
             setIsTyping(false);
-        }, 1500);
+        }
     };
 
     const getContractStatus = (agentId: string) => {
