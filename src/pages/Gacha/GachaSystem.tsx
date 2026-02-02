@@ -60,10 +60,12 @@ export const GachaSystem = () => {
     const {
         chatMessages,
         chatInput,
-        setChatInput,
         isTyping,
+        isExpanded,
+        setIsExpanded,
         sendMessage,
-        initializeChat
+        initializeChat,
+        setChatInput
     } = useChat(selectedAgent);
 
     // Initialize Data
@@ -190,6 +192,8 @@ export const GachaSystem = () => {
                         messages={chatMessages}
                         input={chatInput}
                         isTyping={isTyping}
+                        isExpanded={isExpanded}
+                        onToggleExpand={() => setIsExpanded(!isExpanded)}
                         onInputChange={setChatInput}
                         onSend={sendMessage}
                         onClose={() => setActiveTab('details')}
