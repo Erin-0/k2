@@ -121,29 +121,131 @@ export const Council = () => {
 
             // --- CONTEXT INJECTION START ---
             let specificContext = "";
+            const userBalance = formatNeuralCurrency(user.balance || 0);
+            const userName = user.username || 'Sovereign';
 
-            if (selectedMinister.id === 'companies') {
-                const userBalance = formatNeuralCurrency(user.balance || 0);
-                const ownedCompNames = user.ownedCompanies?.map((c: any) => c.name).join(", ") || "None";
+            switch (selectedMinister.id) {
+                case 'companies':
+                    const ownedCompNames = user.ownedCompanies?.map((c: any) => c.name).join(", ") || "None";
+                    const marketList = companiesData.map((c: any) => `- ${c.name}: ${formatNeuralCurrency(c.price)}`).join("\n");
+                    specificContext = `
+[CLASSIFIED DATA - MINISTER OF PROJECTS]
+SOVEREIGN ASSETS:
+- Liquid Balance: ${userBalance}
+- Owned Corporations: ${ownedCompNames || "None"}
 
-                // Create a simplified market list (Name: Price) to save tokens but provide full data
-                const marketList = companiesData.map((c: any) => `- ${c.name}: ${formatNeuralCurrency(c.price)}`).join("\n");
+GLOBAL MARKET LISTINGS:
+${marketList}
+[END DATA]`;
+                    break;
 
-                specificContext = `
-                [SECRET CLASSIFIED DATA FOR MINISTER EYES ONLY]
-                CURRENT SOVEREIGN ASSETS:
-                - Balance: ${userBalance}
-                - Owned Corporations: ${ownedCompNames}
+                case 'weapons':
+                    const weapons = user.weapons || [];
+                    const weaponList = weapons.map((w: any) =>
+                        `- ${w.name} (Qty: ${w.quantity || 1}): ATK ${w.attack || w.power || 0} | DEF ${w.defense || 0}`
+                    ).join("\n") || "• Arsenal is empty";
 
-                GLOBAL MARKET DATA (Stock Exchange):
-                ${marketList}
+                    const totalAttack = weapons.reduce((sum: number, w: any) => sum + ((w.attack || w.power || 0) * (w.quantity || 1)), 0);
 
-                INSTRUCTIONS:
-                - Use this data to recommend affordable companies based on the Sovereign's specific balance.
-                - If the Sovereign asks "what can I buy?", analyze the list and suggest the best options under their current balance.
-                - Do NOT list all companies, only relevant ones.
-                [END DATA]
-                `;
+                    specificContext = `
+[CLASSIFIED DATA - MINISTER OF DEFENSE]
+ARSENAL INVENTORY:
+${weaponList}
+
+COMBAT READINESS:
+- Total Attack Power: ${totalAttack}
+- Defense Units: ${user.defenseUnits || 0}
+- Recent Acquisitions: ${user.recentWeapons ? user.recentWeapons.map((w: any) => w.name).join(", ") : "None"}
+[END DATA]`;
+                    break;
+
+                case 'map':
+                case 'war':
+                    const territories = user.territories || [];
+                    const terrList = territories.map((t: any) =>
+                        `- ${t.name || t.id}: Defense Lvl ${t.defenseLevel || t.defense || 0} | Income ${formatNeuralCurrency(t.income || 0)}`
+                    ).join("\n") || "• No territorial control";
+
+                    specificContext = `
+[CLASSIFIED DATA - MINISTER OF WAR]
+TERRITORIAL ASSETS:
+- Total Territories: ${territories.length}
+- Details:
+${terrList}
+
+THREAT ASSESSMENT:
+- Border Conflicts: ${user.activeWars || 0}
+- Defensive Strength: ${user.defensePower || 'Unknown'}
+[END DATA]`;
+                    break;
+
+                case 'loot':
+                case 'resources':
+                    const resources = user.resources || {};
+                    const resList = Object.entries(resources)
+                        .map(([key, val]: [string, any]) => `- ${key}: ${val} units`)
+                        .join("\n") || "• Depot is empty";
+
+                    specificContext = `
+[CLASSIFIED DATA - MINISTER OF RESOURCES]
+RESOURCE DEPOT:
+${resList}
+
+PRODUCTION CAPACITY:
+- Daily Output: ${user.dailyProduction || 'N/A'}
+- Export Ready: ${user.exportReady ? 'Yes' : 'No'}
+[END DATA]`;
+                    break;
+
+                case 'loans':
+                    const loans = user.loans || [];
+                    const activeLoans = loans
+                        .filter((l: any) => l.status === 'active')
+                        .map((l: any) => `- $${formatNeuralCurrency(l.amount)} @ ${l.interestRate || l.interest}% (Due: ${l.deadline ? new Date(l.deadline.seconds * 1000).toLocaleDateString() : 'N/A'})`)
+                        .join("\n") || "• No active debt";
+
+                    specificContext = `
+[CLASSIFIED DATA - MINISTER OF FINANCE]
+FINANCIAL OBLIGATIONS:
+${activeLoans}
+
+CREDIT STATUS:
+- Active Loans: ${loans.filter((l: any) => l.status === 'active').length}
+- Credit Score: ${user.creditScore || 750}/1000
+- Loan Capacity Remaining: ${formatNeuralCurrency((user.maxLoan || 0) - (user.currentDebt || 0))}
+[END DATA]`;
+                    break;
+
+                case 'home':
+                    const netWorth = formatNeuralCurrency((user.balance || 0) + (user.assetsValue || 0));
+                    specificContext = `
+[CLASSIFIED DATA - STATE OVERVIEW]
+SOVEREIGN PROFILE: ${userName}
+- Liquid Balance: ${userBalance}
+- Net Worth: ${netWorth}
+- Global Rank: #${user.rank || '??'}
+- Council Access: Full (14 Ministers)
+[END DATA]`;
+                    break;
+
+                case 'transfers':
+                    const recentTransfers = user.recentTransfers?.slice(-3).map((t: any) =>
+                        `- ${t.type === 'sent' ? 'To' : 'From'} ${t.target}: $${formatNeuralCurrency(t.amount)}`
+                    ).join("\n") || "• No recent transactions";
+
+                    specificContext = `
+[CLASSIFIED DATA - EXTERNAL RELATIONS]
+RECENT TRANSFERS:
+${recentTransfers}
+
+LIQUIDITY STATUS:
+- Available for Transfer: ${userBalance}
+- Transfer Limit: Unlimited
+[END DATA]`;
+                    break;
+
+                default:
+                    specificContext = `[STANDARD ACCESS - GENERAL ADVISORY MODE]`;
             }
             // --- CONTEXT INJECTION END ---
 
