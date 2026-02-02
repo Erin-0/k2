@@ -2,12 +2,13 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import Groq from 'groq-sdk';
 import type { Agent, ChatMessage } from '../types';
 
-const GROQ_API_KEY = "YOUR_API_KEY";
+const GROQ_API_KEY = "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";
 
 export const useChat = (agent: Agent | null) => {
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     const [chatInput, setChatInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
     const chatEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -27,36 +28,43 @@ export const useChat = (agent: Agent | null) => {
     const sendMessage = useCallback(async () => {
         if (!chatInput.trim() || !agent) return;
 
-        const userMsg: ChatMessage = { 
-            role: 'user', 
-            content: chatInput, 
-            timestamp: new Date() 
+        const userMsg: ChatMessage = {
+            role: 'user',
+            content: chatInput,
+            timestamp: new Date()
         };
-        
+
         setChatMessages(prev => [...prev, userMsg]);
         setChatInput('');
         setIsTyping(true);
 
         try {
-            const client = new Groq({ 
-                apiKey: GROQ_API_KEY, 
-                dangerouslyAllowBrowser: true 
+            const client = new Groq({
+                apiKey: GROQ_API_KEY,
+                dangerouslyAllowBrowser: true
             });
 
+            const chatHistory: any[] = chatMessages.map(m => ({
+                role: m.role === 'user' ? 'user' : 'assistant',
+                content: m.content
+            })).slice(-10);
+
             const completion = await client.chat.completions.create({
-                model: "llama-3.3-70b-versatile",
+                model: "openai/gpt-oss-120b",
                 messages: [
                     {
                         role: "system",
                         content: `You are ${agent.name}, also known as ${agent.title}. 
-                        Your personality: ${agent.personality}.
+                        Your personality: ${agent.personality}. 
                         Your background: ${agent.desc}.
                         Respond to the user as this character. Keep responses concise and immersive.
-                        Always respond in Arabic.`
-                    },
-                    { role: "user", content: userMsg.content }
+                        Always respond in Arabic.
+                        Context of previous conversation is provided below.`
+                    } as any,
+                    ...chatHistory,
+                    { role: "user", content: userMsg.content } as any
                 ],
-                temperature: 0.9,
+                temperature: 0.8,
                 max_tokens: 1024,
                 stream: true
             });
@@ -91,6 +99,8 @@ export const useChat = (agent: Agent | null) => {
         chatInput,
         setChatInput,
         isTyping,
+        isExpanded,
+        setIsExpanded,
         sendMessage,
         initializeChat,
         chatEndRef
