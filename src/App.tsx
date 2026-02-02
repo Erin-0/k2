@@ -24,14 +24,14 @@ import { News } from './pages/News';
 import {
   LayoutDashboard, ArrowRightLeft, Building2, LogOut, Sword,
   Users, MessageSquare, TrendingUp, Map as MapIcon,
-  Pickaxe, Landmark, Store, Trophy, Gem, Zap, Crown, ShieldAlert, Newspaper
+  Pickaxe, Landmark, Store, Trophy, Gem, Zap, Crown, ShieldAlert, Newspaper, Menu, X
 } from 'lucide-react';
 
 const EMERGENCY_MODE = false;
-const EMERGENCY_MSG = "عطل منطق. المرجو الانتضار حتى اجل لاحق.";
+const EMERGENCY_MSG = "تم اكتشاف تهديد خطير: أوقف العمليات فوراً. اتصل بالإدارة.";
 
 
-import React from 'react';
+import React, { useState } from 'react';
 
 const navLinks = [
   { path: '/', icon: <LayoutDashboard size={18} />, label: 'المركز العصبي' },
@@ -51,43 +51,48 @@ const navLinks = [
   { path: '/chat', icon: <MessageSquare size={18} />, label: 'الاتصالات' },
 ];
 
-const Sidebar = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+const Sidebar = ({ isOpen, toggle }: { isOpen: boolean, toggle: () => void }) => {
   const location = useLocation();
   const { logout } = useAuth();
 
   return (
     <>
-      <div className={`sidebar-overlay ${isOpen ? 'active' : ''}`} onClick={onClose}></div>
-      <aside className={`app-sidebar ${isOpen ? 'mobile-open' : ''}`}>
+      <div className={`sidebar-overlay ${isOpen ? 'active' : ''}`} onClick={toggle}></div>
+      <aside className={`app-sidebar ${isOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
-          <div className="logo-box">
-            <Zap size={18} className="logo-spark" />
+          <div className="logo-section">
+            <div className="logo-box">
+              <Zap size={20} className="logo-spark" />
+            </div>
+            <span className="sidebar-logo text-gradient">K2_SOV</span>
           </div>
-          <Link to="/" className="sidebar-logo text-gradient" onClick={onClose}>K2_SOV</Link>
-          <button className="mobile-close-btn" onClick={onClose}>
-            <LogOut size={18} style={{ transform: 'rotate(180deg)' }} />
+          <button className="sidebar-mobile-toggle" onClick={toggle}>
+            <X size={20} />
           </button>
         </div>
 
         <nav className="sidebar-nav">
-          <p className="micro-label" style={{ padding: '0 1rem', marginBottom: '0.5rem', opacity: 0.4 }}>القائمة الرئيسية</p>
-          {navLinks.map(link => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`sidebar-link ${location.pathname === link.path ? 'active' : ''}`}
-              onClick={onClose}
-            >
-              <span className="link-icon">{link.icon}</span>
-              <span className="link-text">{link.label}</span>
-            </Link>
-          ))}
+          <div className="nav-group">
+            <p className="micro-label nav-label">العمليات السيادية</p>
+            {navLinks.map(link => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`sidebar-link ${location.pathname === link.path ? 'active' : ''}`}
+                onClick={() => { if (window.innerWidth < 1024) toggle(); }}
+              >
+                <span className="link-icon">{link.icon}</span>
+                <span className="link-text">{link.label}</span>
+                {location.pathname === link.path && <div className="active-glow"></div>}
+              </Link>
+            ))}
+          </div>
         </nav>
 
         <div className="sidebar-footer">
-          <button onClick={() => { logout(); onClose(); }} className="logout-btn">
-            <LogOut size={14} />
-            <span>إنهاء الجلسة</span>
+          <button onClick={logout} className="logout-btn">
+            <LogOut size={16} />
+            <span>تسجيل الخروج</span>
           </button>
         </div>
       </aside>
@@ -101,67 +106,40 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
   return (
     <header className="app-header">
       <div className="header-left">
-        <button className="mobile-menu-trigger" onClick={onMenuClick}>
-          <LayoutDashboard size={18} />
-          <span className="micro-label">القائمة</span>
+        <button className="menu-trigger" onClick={onMenuClick}>
+          <Menu size={20} />
         </button>
-        <div className="system-status desktop-only">
+        <div className="system-status">
           <div className="status-dot pulse"></div>
-          <span className="micro-label">النظام_نشط</span>
+          <span className="status-text mono">SYSTEM_ONLINE</span>
         </div>
-        <button className="desktop-menu-trigger" onClick={onMenuClick}>
-          <LayoutDashboard size={16} />
-          <span className="micro-label">الأدلة</span>
-        </button>
       </div>
 
       <div className="header-right">
-        <div className="wealth-hud">
-          <div className="wealth-label micro-label">السيولة_الصافية</div>
-          <div className="wealth-value mono">${formatNeuralCurrency(user?.balance || 0)}</div>
+        <div className="header-stats">
+          <div className="stat-item">
+            <span className="stat-label micro-label">NET_WORTH</span>
+            <span className="stat-value mono">${formatNeuralCurrency(user?.balance || 0)}</span>
+          </div>
         </div>
 
-        <Link to="/accounts" className="avatar-uplink">
-          {user?.photoUrl ? (
-            <img src={user.photoUrl} className="user-avatar" style={{ borderColor: user.color }} alt="" />
-          ) : (
-            <div className="user-avatar" style={{ backgroundColor: user?.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '900', color: 'white', fontSize: '12px' }}>
-              {user?.username?.charAt(0).toUpperCase()}
-            </div>
-          )}
-          <div className="avatar-ring" style={{ borderColor: user?.color }}></div>
+        <Link to="/accounts" className="header-profile">
+          <div className="profile-info">
+            <span className="profile-name mono">{user?.username}</span>
+            <span className="profile-rank micro-label">ELITE_OPERATIVE</span>
+          </div>
+          <div className="avatar-frame" style={{ borderColor: user?.color }}>
+            {user?.photoUrl ? (
+              <img src={user.photoUrl} alt="" className="user-avatar" />
+            ) : (
+              <div className="user-avatar placeholder" style={{ backgroundColor: user?.color }}>
+                {user?.username?.charAt(0).toUpperCase()}
+              </div>
+            )}
+          </div>
         </Link>
       </div>
     </header>
-  );
-};
-
-const BottomNav = ({ onMenuClick }: { onMenuClick: () => void }) => {
-  const location = useLocation();
-  const mobileLinks = [
-    { path: '/', icon: <LayoutDashboard size={22} /> },
-    { path: '/map', icon: <MapIcon size={22} /> },
-    { path: '/store', icon: <Store size={22} /> },
-    { path: '/chat', icon: <MessageSquare size={22} /> },
-  ];
-
-  return (
-    <nav className="app-bottom-nav">
-      {mobileLinks.map(link => (
-        <Link
-          key={link.path}
-          to={link.path}
-          className={`bottom-link ${location.pathname === link.path ? 'active' : ''}`}
-        >
-          {link.icon}
-          <div className="bottom-indicator"></div>
-        </Link>
-      ))}
-      <button className="bottom-link" onClick={onMenuClick}>
-        <Users size={22} />
-        <span className="micro-label" style={{ fontSize: '7px', marginTop: '2px' }}>المزيد</span>
-      </button>
-    </nav>
   );
 };
 
@@ -174,7 +152,7 @@ const PrivateRoute = ({ children }: { children: React.ReactElement }) => {
           <div className="circuit-1"></div>
           <div className="circuit-2"></div>
         </div>
-        <p className="micro-label" style={{ marginTop: '2rem', letterSpacing: '0.1em' }}>جاري الاتصال بالنظام العصبي...</p>
+        <p className="micro-label" style={{ marginTop: '2rem', letterSpacing: '0.1em', color: 'var(--primary)' }}>INITIALIZING NEURAL LINK...</p>
       </div>
     );
   }
@@ -183,23 +161,17 @@ const PrivateRoute = ({ children }: { children: React.ReactElement }) => {
 };
 
 const Layout = ({ children }: { children: React.ReactElement }) => {
-  const [isSidebarOpen, setSidebarOpen] = React.useState(false);
-
-  const toggleSidebar = () => setSidebarOpen(prev => !prev);
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
 
   return (
     <PrivateRoute>
-      <div className={`app-layout ${!isSidebarOpen ? 'sidebar-closed' : ''}`}>
-        <div className="bg-glitch"></div>
-        <div className="orb orb-1"></div>
-        <div className="orb orb-2"></div>
-        <Sidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
-        <div className="app-content-wrapper">
-          <Header onMenuClick={toggleSidebar} />
-          <main className="app-main">
+      <div className={`app-layout ${isSidebarOpen ? 'sidebar-expanded' : 'sidebar-collapsed'}`}>
+        <Sidebar isOpen={isSidebarOpen} toggle={() => setSidebarOpen(!isSidebarOpen)} />
+        <div className="app-main-container">
+          <Header onMenuClick={() => setSidebarOpen(!isSidebarOpen)} />
+          <main className="app-content content-fade-in">
             {children}
           </main>
-          <BottomNav onMenuClick={toggleSidebar} />
         </div>
       </div>
     </PrivateRoute>
@@ -208,43 +180,43 @@ const Layout = ({ children }: { children: React.ReactElement }) => {
 
 function App() {
   if (EMERGENCY_MODE) {
-  return (
-    <div className="emergency-overlay">
-      <div className="scanlines"></div>
-      
-      <div className="warning-bar top">
-        {Array(10).fill(" خطأ_حرج // تم_رفض_الوصول // ").map((t, i) => <span key={i}>{t}</span>)}
-      </div>
+    return (
+      <div className="emergency-overlay">
+        <div className="scanlines"></div>
 
-      <div className="emergency-content">
-        <div className="glitch-wrapper">
-          <ShieldAlert size={100} className="emergency-icon" />
-          <h1 className="glitch-text" data-text="توقف_النظام">توقف_النظام</h1>
+        <div className="warning-bar top">
+          {Array(10).fill(" خطأ_حرج // تم_رفض_الوصول // ").map((t, i) => <span key={i}>{t}</span>)}
         </div>
 
-        <div className="terminal-box">
-          <div className="terminal-header">
-            <div className="dot red"></div>
-            <div className="dot yellow"></div>
-            <div className="dot green"></div>
-            <span className="terminal-title">سجل_تحذير_مشفر</span>
+        <div className="emergency-content">
+          <div className="glitch-wrapper">
+            <ShieldAlert size={100} className="emergency-icon" />
+            <h1 className="glitch-text" data-text="توقف_النظام">توقف_النظام</h1>
           </div>
-          <div className="terminal-body">
-            <p className="error-code">رمز الخطأ: 0x000000000F</p>
-            <p className="main-msg">{EMERGENCY_MSG}</p>
-            <div className="loading-bar-container">
-              <div className="loading-bar"></div>
+
+          <div className="terminal-box">
+            <div className="terminal-header">
+              <div className="dot red"></div>
+              <div className="dot yellow"></div>
+              <div className="dot green"></div>
+              <span className="terminal-title">سجل_تحذير_مشفر</span>
             </div>
-            <p className="flicker-text">إعادة إنشاء الرابط العصبي...</p>
+            <div className="terminal-body">
+              <p className="error-code">رمز الخطأ: 0x000000000F</p>
+              <p className="main-msg">{EMERGENCY_MSG}</p>
+              <div className="loading-bar-container">
+                <div className="loading-bar"></div>
+              </div>
+              <p className="flicker-text">إعادة إنشاء الرابط العصبي...</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="warning-bar bottom">
-        {Array(10).fill(" بروتوكول_88_نشط // مصدر_مجهول // ").map((t, i) => <span key={i}>{t}</span>)}
-      </div>
+        <div className="warning-bar bottom">
+          {Array(10).fill(" بروتوكول_88_نشط // مصدر_مجهول // ").map((t, i) => <span key={i}>{t}</span>)}
+        </div>
 
-      <style>{`
+        <style>{`
         .emergency-overlay {
           position: fixed;
           inset: 0;
@@ -294,9 +266,9 @@ function App() {
         .flicker-text { font-size: 0.6rem; animation: flicker 0.5s infinite; opacity: 0.5; }
         @keyframes flicker { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.1; } }
       `}</style>
-    </div>
-  );
-}
+      </div>
+    );
+  }
 
   return (
     <AuthProvider>
@@ -325,250 +297,227 @@ function App() {
 
         <style>{`
         :root {
-            --sidebar-width: 260px;
-            --header-height: 64px;
+            --sidebar-width: 280px;
+            --sidebar-collapsed-width: 0px;
+            --header-height: 70px;
+            --sidebar-bg: rgba(6, 7, 12, 0.95);
+            --sidebar-border: rgba(255, 255, 255, 0.08);
+            --primary-glow: rgba(99, 102, 241, 0.2);
         }
 
         .app-layout {
           display: flex;
           min-height: 100vh;
           background: #03040b;
+          color: white;
           overflow-x: hidden;
-          width: 100%;
         }
-        
-        .app-content-wrapper {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          min-width: 0;
-          padding-left: var(--sidebar-width);
-          transition: all 0.3s ease;
-          position: relative;
-        }
-        
-        .app-layout.sidebar-closed .app-content-wrapper {
-          padding-left: 0;
-        }
-        
-        /* SIDEBAR */
+
+        /* SIDEBAR PROFESSIONAL RAIL */
         .app-sidebar {
           position: fixed;
-          left: 0;
           top: 0;
-          bottom: 0;
+          left: 0;
+          height: 100vh;
           width: var(--sidebar-width);
-          background: rgba(8, 9, 15, 0.98);
-          backdrop-filter: blur(20px);
-          border-right: 1px solid var(--border-bright);
+          background: var(--sidebar-bg);
+          backdrop-filter: blur(25px);
+          border-right: 1px solid var(--sidebar-border);
+          z-index: 1000;
           display: flex;
           flex-direction: column;
-          z-index: 1001;
-          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 20px 0 50px rgba(0,0,0,0.5);
         }
 
-        .sidebar-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
+        .sidebar-expanded .app-sidebar { transform: translateX(0); }
+        .sidebar-collapsed .app-sidebar { transform: translateX(-100%); }
 
-        .sidebar-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
         .sidebar-header {
-          padding: 1.25rem 1rem;
+          padding: 1.5rem;
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          border-bottom: 1px solid rgba(255,255,255,0.03);
+          justify-content: space-between;
+          border-bottom: 1px solid var(--sidebar-border);
         }
 
-        .mobile-close-btn {
-            display: none;
-            margin-left: auto;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text-muted);
-            padding: 0.4rem;
-            border-radius: 8px;
-        }
-
+        .logo-section { display: flex; align-items: center; gap: 0.75rem; }
         .logo-box {
-            width: 28px;
-            height: 28px;
-            background: var(--primary);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 15px var(--primary-glow);
+          width: 36px;
+          height: 36px;
+          background: linear-gradient(135deg, var(--primary), #4338ca);
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 0 20px var(--primary-glow);
         }
-        
-        .sidebar-logo {
-          font-size: 1rem;
-          font-weight: 900;
-          text-decoration: none;
-          letter-spacing: 0.1em;
-          color: #fff;
-        }
-        
+        .sidebar-logo { font-size: 1.2rem; font-weight: 900; letter-spacing: 2px; }
+
+        .sidebar-mobile-toggle { display: none; background: transparent; border: none; color: var(--text-muted); }
+
         .sidebar-nav {
           flex: 1;
-          padding: 0.75rem 0.5rem;
+          padding: 1.5rem 1rem;
           overflow-y: auto;
           scrollbar-width: none;
         }
+        .sidebar-nav::-webkit-scrollbar { display: none; }
+
+        .nav-label { padding: 0 1rem; margin-bottom: 1rem; opacity: 0.5; letter-spacing: 1px; }
 
         .sidebar-link {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
-          padding: 0.65rem 0.75rem;
+          gap: 1rem;
+          padding: 0.85rem 1rem;
+          margin-bottom: 0.4rem;
           text-decoration: none;
           color: var(--text-muted);
-          border-radius: 10px;
-          margin-bottom: 0.2rem;
-          transition: 0.2s;
-          font-size: 0.8rem;
+          border-radius: 12px;
+          transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
+          font-weight: 500;
+          font-size: 0.9rem;
         }
-        
+
+        .sidebar-link:hover {
+          background: rgba(255,255,255,0.03);
+          color: white;
+          padding-left: 1.25rem;
+        }
+
         .sidebar-link.active {
-          background: rgba(99, 102, 241, 0.15);
+          background: linear-gradient(90deg, rgba(99, 102, 241, 0.15), transparent);
           color: var(--primary);
-          border: 1px solid rgba(99, 102, 241, 0.3);
+          border: 1px solid rgba(99, 102, 241, 0.2);
         }
-        
+
+        .active-glow {
+          position: absolute;
+          left: -10px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 20px;
+          height: 20px;
+          background: var(--primary);
+          filter: blur(15px);
+          opacity: 0.5;
+        }
+
         .sidebar-footer {
-          padding: 1rem;
-          border-top: 1px solid var(--border-dim);
+          padding: 1.5rem 1rem;
+          border-top: 1px solid var(--sidebar-border);
         }
-        
+
         .logout-btn {
           width: 100%;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 0.5rem;
+          gap: 0.75rem;
+          padding: 0.85rem;
           background: rgba(239, 68, 68, 0.1);
           border: 1px solid rgba(239, 68, 68, 0.2);
-          color: var(--danger);
-          padding: 0.6rem;
-          border-radius: 8px;
+          color: #ef4444;
+          border-radius: 12px;
           font-weight: 700;
-          font-size: 0.75rem;
+          font-size: 0.85rem;
+          transition: 0.3s;
         }
-        
+        .logout-btn:hover { background: #ef4444; color: white; }
+
+        /* MAIN CONTAINER */
+        .app-main-container {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+          transition: padding 0.4s ease;
+        }
+
+        .sidebar-expanded .app-main-container { padding-left: var(--sidebar-width); }
+        .sidebar-collapsed .app-main-container { padding-left: 0; }
+
         /* HEADER */
         .app-header {
           height: var(--header-height);
+          background: rgba(3, 4, 11, 0.8);
+          backdrop-filter: blur(15px);
+          border-bottom: 1px solid var(--sidebar-border);
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 0 1.25rem;
-          background: rgba(3, 4, 11, 0.7);
-          backdrop-filter: blur(15px);
-          border-bottom: 1px solid var(--border-dim);
+          padding: 0 2rem;
           position: sticky;
           top: 0;
           z-index: 900;
         }
 
-        .mobile-menu-trigger {
-            display: none;
-            background: var(--surface-soft);
-            border: 1px solid var(--border-bright);
-            padding: 0.4rem 0.6rem;
-            color: var(--primary);
-            gap: 0.4rem;
-            border-radius: 10px;
-            align-items: center;
+        .menu-trigger {
+          background: rgba(255,255,255,0.05);
+          border: 1px solid var(--sidebar-border);
+          color: white;
+          padding: 0.5rem;
+          border-radius: 10px;
+          cursor: pointer;
         }
 
-        .wealth-label { color: var(--primary); font-size: 0.55rem; }
-        .wealth-value { font-size: 1.1rem; font-weight: 900; color: white; }
-        
-        .user-avatar {
-          width: 32px;
-          height: 32px;
-          border-radius: 6px;
-          border: 1.5px solid var(--surface-soft);
-          object-fit: cover;
-        }
+        .system-status { display: flex; align-items: center; gap: 0.75rem; margin-left: 1.5rem; }
+        .status-text { font-size: 0.65rem; color: var(--primary); letter-spacing: 1px; }
 
-        /* BOTTOM NAV */
-        .app-bottom-nav {
-          display: none;
-          position: fixed;
-          bottom: 16px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: rgba(10, 11, 19, 0.9);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255,255,255,0.1);
-          padding: 0.4rem;
-          border-radius: 20px;
-          z-index: 999;
-          width: 90%;
-          max-width: 400px;
-          justify-content: space-around;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-        }
-        
-        .bottom-link {
-          flex: 1;
-          height: 44px;
+        .header-stats { display: flex; gap: 2rem; margin-right: 2rem; }
+        .stat-item { display: flex; flex-direction: column; align-items: flex-end; }
+        .stat-label { font-size: 0.5rem; opacity: 0.5; }
+        .stat-value { font-size: 1.1rem; font-weight: 900; color: white; }
+
+        .header-profile {
           display: flex;
-          flex-direction: column;
           align-items: center;
-          justify-content: center;
-          color: var(--text-muted);
-          position: relative;
-          background: transparent;
-          border: none;
-        }
-        
-        .bottom-link.active { color: var(--primary); }
-
-        .bottom-indicator {
-            position: absolute;
-            bottom: 2px;
-            width: 3px;
-            height: 3px;
-            border-radius: 50%;
-            background: var(--primary);
-            opacity: 0;
+          gap: 1rem;
+          text-decoration: none;
+          color: white;
+          padding: 0.4rem;
+          background: rgba(255,255,255,0.03);
+          border-radius: 14px;
+          border: 1px solid var(--sidebar-border);
         }
 
-        .bottom-link.active .bottom-indicator { opacity: 1; box-shadow: 0 0 8px var(--primary); }
-        
-        /* RESPONSIVE */
+        .profile-info { display: flex; flex-direction: column; align-items: flex-end; font-size: 0.8rem; }
+        .profile-name { font-weight: 700; }
+        .profile-rank { font-size: 0.55rem; color: var(--primary); }
+
+        .avatar-frame {
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
+          border: 2px solid var(--primary);
+          padding: 2px;
+          overflow: hidden;
+        }
+        .user-avatar { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+        .user-avatar.placeholder { display: flex; align-items: center; justify-content: center; font-weight: 900; }
+
+        .app-content { padding: 2rem; flex: 1; }
+
+        .sidebar-overlay { display: none; }
+
+        /* RESPONSIVE OVERRIDES */
         @media (max-width: 1024px) {
+          .app-main-container { padding-left: 0 !important; }
           .app-sidebar { transform: translateX(-100%); width: 280px; }
-          .app-sidebar.mobile-open { transform: translateX(0); }
-          .app-content-wrapper { padding-left: 0 !important; }
-          .app-bottom-nav { display: flex; }
-          .mobile-close-btn { display: flex; }
-          .mobile-menu-trigger { display: flex; }
-          .desktop-only, .desktop-menu-trigger { display: none !important; }
-          .app-main { padding: 1rem; padding-bottom: 90px; }
-          .wealth-value { font-size: 0.95rem; }
-          .header-right { gap: 0.75rem; }
-          .app-header { padding: 0 1rem; height: 56px; }
+          .app-sidebar.open { transform: translateX(0); }
+          .sidebar-mobile-toggle { display: block; }
+          .sidebar-overlay { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 999; opacity: 0; visibility: hidden; transition: 0.3s; }
+          .sidebar-overlay.active { opacity: 1; visibility: visible; }
+          .header-stats, .profile-info { display: none; }
+          .app-header { padding: 0 1rem; }
+          .app-content { padding: 1rem; }
         }
 
-        @media (max-width: 414px) {
-            .wealth-hud { display: flex; flex-direction: column; align-items: flex-end; }
-            .sidebar-logo { font-size: 0.9rem; }
-            .sidebar-link { padding: 0.55rem 0.6rem; font-size: 0.75rem; }
-        }
+        .content-fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .loading-screen {
           height: 100vh;
@@ -577,8 +526,6 @@ function App() {
           align-items: center;
           justify-content: center;
           background: #03040b;
-          text-align: center;
-          padding: 20px;
         }
       `}</style>
       </TerminalProvider>
