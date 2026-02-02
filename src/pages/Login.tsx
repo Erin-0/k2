@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-
+import { useAuth } from '../context/AuthContext';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import imageCompression from 'browser-image-compression';
@@ -10,14 +10,21 @@ import { Upload, ShieldCheck, Cpu } from 'lucide-react';
 const colors = ["#6366f1", "#a855f7", "#06b6d4", "#f43f5e", "#10b981", "#f59e0b"];
 
 export const Login = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
     const [isRegister, setIsRegister] = useState(false);
     const [formData, setFormData] = useState({ username: '', email: '', password: '', confirmPassword: '', color: '' });
     const [language, setLanguage] = useState<'en' | 'fr' | 'ar'>('en');
     const [profileImg, setProfileImg] = useState('');
-
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+
+    // Redirection protocol: ensures user is moved to the dashboard once authenticated
+    useEffect(() => {
+        if (user) {
+            navigate('/');
+        }
+    }, [user, navigate]);
 
     const handleImageUpload = async (event: any) => {
         const file = event.target.files[0];
@@ -34,6 +41,7 @@ export const Login = () => {
     };
 
     const handleAuth = async () => {
+        if (loading) return;
         setError('');
         setLoading(true);
         try {
@@ -62,19 +70,18 @@ export const Login = () => {
                 };
 
                 await setDoc(doc(db, "users", userId), newUser);
-
-                navigate('/');
+                // Redirection is handled by the useEffect above
             } else {
                 await signInWithEmailAndPassword(auth, formData.email, formData.password);
-                navigate('/');
+                // Redirection is handled by the useEffect above
             }
         } catch (e: any) {
             let msg = e.message;
             if (e.code === 'auth/email-already-in-use') msg = "IDENTITY_EXISTS: UPLINK_CONFLICT";
             if (e.code === 'auth/invalid-credential') msg = "ACCESS_DENIED: INVALID_CREDENTIALS";
             setError(msg || "NETWORK_UPLINK_FAILURE");
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     return (
