@@ -5,8 +5,7 @@
         "type": "Attack",
         "power": 100,
         "price": 1000,
-        "description": "Short-range sound wave emitter.",
-        "image": "https://image2url.com/r2/bucket3/images/1766910623376-152aa72f-4fa6-4b94-88cc-682f9697d8e6.png"
+        "description": "Short-range sound wave emitter."
     },
     {
         "id": "kevlar_vest",
@@ -14,8 +13,7 @@
         "type": "Defense",
         "power": 100,
         "price": 1000,
-        "description": "Basic ballistic protection.",
-        "image": "https://image2url.com/r2/bucket3/images/1766910709766-ec2c8d61-d1e7-40d9-8272-6d5bef5a30a7.png"
+        "description": "Basic ballistic protection."
     },
     {
         "id": "laser_carbine",
@@ -23,8 +21,7 @@
         "type": "Attack",
         "power": 500,
         "price": 7500,
-        "description": "High-precision light beam rifle.",
-        "image": "https://image2url.com/r2/bucket3/images/1766910934121-32ce26a6-d825-4fda-b0c0-87f6dc31a2cf.png"
+        "description": "High-precision light beam rifle."
     },
     {
         "id": "alloy_shield",
@@ -32,170 +29,7 @@
         "type": "Defense",
         "power": 500,
         "price": 7500,
-        "description": "Heavy-duty metallic barrier.",
-        "image": "https://image2url.com/r2/bucket3/images/1766911060549-4321e40f-2eb0-401c-be67-5083f2e804fb.png"
-    },
-    {
-        "id": "plasma_grenade",
-        "name": "Plasma Grenade",
-        "type": "Attack",
-        "power": 2500,
-        "price": 50000,
-        "description": "Localized superheated gas explosion.",
-        "image": "https://image2url.com/r2/bucket3/images/1766911210168-fb95ddfe-b4e4-472d-8b1e-8df4a5ea0300.png"
-    },
-    {
-        "id": "nano_mesh",
-        "name": "Nano-Silk Mesh",
-        "type": "Defense",
-        "power": 2500,
-        "price": 50000,
-        "description": "Micro-weave armor for high mobility.",
-        "image": "https://image2url.com/r2/bucket3/images/1766911301011-f0482ef8-d40f-4629-9884-9185c4b06117.png"
-    },
-    {
-        "id": "railgun_mk2",
-        "name": "Railgun Mk II",
-        "type": "Attack",
-        "power": 5000,
-        "price": 250000,
-        "description": "Electromagnetic slug launcher.",
-        "image": "https://image2url.com/r2/bucket3/images/1766911409935-d4cb4370-b5cc-4a14-8847-4889f1c2f21c.png"
-    },
-    {
-        "id": "energy_field",
-        "name": "Energy Field",
-        "type": "Defense",
-        "power": 5000,
-        "price": 250000,
-        "description": "Basic electromagnetic bubble.",
-        "image": "https://image2url.com/r2/bucket3/images/1766911574919-614ded40-e1b9-47df-b95f-d274a6590212.png"
-    },
-    {
-        "id": "vortex_blade",
-        "name": "Vortex Blade",
-        "type": "Attack",
-        "power": 5000,
-        "price": 1500000,
-        "description": "A blade that bends space-time.",
-        "image": "https://image2url.com/r2/bucket3/images/1766911798947-3b84fe7f-a628-4ec1-96a5-dbf6844169a7.png"
-    },
-    {
-        "id": "phase_armor",
-        "name": "Phase Armor",
-        "type": "Defense",
-        "power": 5000,
-        "price": 1500000,
-        "description": "Allows physical attacks to pass through.",
-        "image": "https://image2url.com/r2/bucket3/images/1766912091227-9e16be07-7c6f-49b8-b8bf-b8ea47c51860.png"
-    },
-    {
-        "id": "ion_cannon",
-        "name": "Ion Cannon",
-        "type": "Attack",
-        "power": 5000,
-        "price": 10000000,
-        "description": "Orbital beam for massive destruction.",
-        "image": "https://image2url.com/r2/bucket3/images/1766912276927-9f196277-7e82-42d7-9060-a58da4bd69d8.png"
-    },
-    {
-        "id": "gravity_well",
-        "name": "Gravity Well",
-        "type": "Defense",
-        "power": 5000,
-        "price": 10000000,
-        "description": "Bends incoming projectiles away.",
-        "image": ""
-    },
-    {
-        "id": "matter_disruptor",
-        "name": "Matter Disruptor",
-        "type": "Attack",
-        "power": 5000,
-        "price": 50000000,
-        "description": "Breaks atomic bonds instantly.",
-        "image": ""
-    },
-    {
-        "id": "molecular_gate",
-        "name": "Molecular Gate",
-        "type": "Defense",
-        "power": 5000,
-        "price": 50000000,
-        "description": "Hardens molecular structure on impact.",
-        "image": ""
-    },
-    {
-        "id": "supernova_launcher",
-        "name": "Supernova Launcher",
-        "type": "Attack",
-        "power": 5000,
-        "price": 250000000,
-        "description": "Miniature star collapse force.",
-        "image": ""
-    },
-    {
-        "id": "stellar_plate",
-        "name": "Stellar Plating",
-        "type": "Defense",
-        "power": 5000,
-        "price": 250000000,
-        "description": "Armor forged in the heart of a star.",
-        "image": ""
-    },
-    {
-        "id": "blackhole_bomb",
-        "name": "Black Hole Bomb",
-        "type": "Attack",
-        "power": 5000,
-        "price": 1000000000,
-        "description": "Absolute erasure of existence.",
-        "image": ""
-    },
-    {
-        "id": "event_horizon",
-        "name": "Event Horizon",
-        "type": "Defense",
-        "power": 5000,
-        "price": 1000000000,
-        "description": "Void shield that absorbs all energy.",
-        "image": ""
-    },
-    {
-        "id": "omega_ray",
-        "name": "Omega Ray",
-        "type": "Attack",
-        "power": 5000,
-        "price": 5000000000,
-        "description": "The ultimate offensive beam.",
-        "image": ""
-    },
-    {
-        "id": "god_barrier",
-        "name": "Aegis of the Ancients",
-        "type": "Defense",
-        "power": 5000,
-        "price": 5000000000,
-        "description": "Indestructible divine protection.",
-        "image": ""
-    },
-    {
-        "id": "quantum_scythe",
-        "name": "Quantum Scythe",
-        "type": "Attack",
-        "power": 5000,
-        "price": 25000000000,
-        "description": "Cuts through realities.",
-        "image": ""
-    },
-    {
-        "id": "multiverse_cloak",
-        "name": "Multiverse Cloak",
-        "type": "Defense",
-        "power": 5000,
-        "price": 25000000000,
-        "description": "Shifts user between dimensions.",
-        "image": ""
+        "description": "Heavy-duty metallic barrier."
     },
     {
         "id": "antimatter_rifle",
@@ -203,8 +37,7 @@
         "type": "Attack",
         "power": 1500,
         "price": 25000,
-        "description": "Fires antimatter pellets.",
-        "image": ""
+        "description": "Fires antimatter pellets."
     },
     {
         "id": "carbon_fiber_shield",
@@ -212,151 +45,278 @@
         "type": "Defense",
         "power": 1500,
         "price": 25000,
-        "description": "Ultra-light impact absorption.",
-        "image": ""
+        "description": "Ultra-light impact absorption."
+    },
+    {
+        "id": "plasma_grenade",
+        "name": "Plasma Grenade",
+        "type": "Attack",
+        "power": 3000,
+        "price": 50000,
+        "description": "Localized superheated gas explosion."
+    },
+    {
+        "id": "nano_mesh",
+        "name": "Nano-Silk Mesh",
+        "type": "Defense",
+        "power": 3000,
+        "price": 50000,
+        "description": "Micro-weave armor for high mobility."
     },
     {
         "id": "fusion_sabre",
         "name": "Fusion Sabre",
         "type": "Attack",
-        "power": 5000,
+        "power": 6500,
         "price": 180000,
-        "description": "Nuclear-powered energy blade.",
-        "image": ""
+        "description": "Nuclear-powered energy blade."
     },
     {
         "id": "reactor_plating",
         "name": "Reactor Plating",
         "type": "Defense",
-        "power": 5000,
+        "power": 6500,
         "price": 180000,
-        "description": "Hardened skin against energy heat.",
-        "image": ""
+        "description": "Hardened skin against energy heat."
+    },
+    {
+        "id": "railgun_mk2",
+        "name": "Railgun Mk II",
+        "type": "Attack",
+        "power": 10000,
+        "price": 250000,
+        "description": "Electromagnetic slug launcher."
+    },
+    {
+        "id": "energy_field",
+        "name": "Energy Field",
+        "type": "Defense",
+        "power": 10000,
+        "price": 250000,
+        "description": "Basic electromagnetic bubble."
     },
     {
         "id": "thunderbolt_missile",
         "name": "Thunderbolt",
         "type": "Attack",
-        "power": 5000,
+        "power": 22000,
         "price": 850000,
-        "description": "Lightning-fast cruise missile.",
-        "image": ""
+        "description": "Lightning-fast cruise missile."
     },
     {
         "id": "tesla_coil_array",
         "name": "Tesla Array",
         "type": "Defense",
-        "power": 5000,
+        "power": 22000,
         "price": 850000,
-        "description": "Zaps incoming threats with electricity.",
-        "image": ""
+        "description": "Zaps incoming threats with electricity."
+    },
+    {
+        "id": "vortex_blade",
+        "name": "Vortex Blade",
+        "type": "Attack",
+        "power": 45000,
+        "price": 1500000,
+        "description": "A blade that bends space-time."
+    },
+    {
+        "id": "phase_armor",
+        "name": "Phase Armor",
+        "type": "Defense",
+        "power": 45000,
+        "price": 1500000,
+        "description": "Allows physical attacks to pass through."
     },
     {
         "id": "warp_blaster",
         "name": "Warp Blaster",
         "type": "Attack",
-        "power": 5000,
+        "power": 90000,
         "price": 4500000,
-        "description": "Fires projectiles through subspace.",
-        "image": ""
+        "description": "Fires projectiles through subspace."
     },
     {
         "id": "subspace_barrier",
         "name": "Subspace Wall",
         "type": "Defense",
-        "power": 5000,
+        "power": 90000,
         "price": 4500000,
-        "description": "Hides territory in a hidden fold.",
-        "image": ""
+        "description": "Hides territory in a hidden fold."
+    },
+    {
+        "id": "ion_cannon",
+        "name": "Ion Cannon",
+        "type": "Attack",
+        "power": 250000,
+        "price": 10000000,
+        "description": "Orbital beam for massive destruction."
+    },
+    {
+        "id": "gravity_well",
+        "name": "Gravity Well",
+        "type": "Defense",
+        "power": 250000,
+        "price": 10000000,
+        "description": "Bends incoming projectiles away."
     },
     {
         "id": "glitch_cannon",
         "name": "System Glitch",
         "type": "Attack",
-        "power": 5000,
+        "power": 500000,
         "price": 22000000,
-        "description": "Corrupts enemy combat data.",
-        "image": ""
+        "description": "Corrupts enemy combat data."
     },
     {
         "id": "firewall_max",
         "name": "Firewall Max",
         "type": "Defense",
-        "power": 5000,
+        "power": 500000,
         "price": 22000000,
-        "description": "Digital protection against glitches.",
-        "image": ""
+        "description": "Digital protection against glitches."
+    },
+    {
+        "id": "matter_disruptor",
+        "name": "Matter Disruptor",
+        "type": "Attack",
+        "power": 1200000,
+        "price": 50000000,
+        "description": "Breaks atomic bonds instantly."
+    },
+    {
+        "id": "molecular_gate",
+        "name": "Molecular Gate",
+        "type": "Defense",
+        "power": 1200000,
+        "price": 50000000,
+        "description": "Hardens molecular structure on impact."
     },
     {
         "id": "void_launcher",
         "name": "Void Launcher",
         "type": "Attack",
-        "power": 5000,
+        "power": 3000000,
         "price": 125000000,
-        "description": "Fires spheres of pure nothingness.",
-        "image": ""
+        "description": "Fires spheres of pure nothingness."
     },
     {
         "id": "vacuum_seal",
         "name": "Vacuum Seal",
         "type": "Defense",
-        "power": 5000,
+        "power": 3000000,
         "price": 125000000,
-        "description": "Protects against void pressure.",
-        "image": ""
+        "description": "Protects against void pressure."
+    },
+    {
+        "id": "supernova_launcher",
+        "name": "Supernova Launcher",
+        "type": "Attack",
+        "power": 7500000,
+        "price": 250000000,
+        "description": "Miniature star collapse force."
+    },
+    {
+        "id": "stellar_plate",
+        "name": "Stellar Plating",
+        "type": "Defense",
+        "power": 7500000,
+        "price": 250000000,
+        "description": "Armor forged in the heart of a star."
     },
     {
         "id": "nebula_gas",
         "name": "Nebula Cloud",
         "type": "Attack",
-        "power": 5000,
+        "power": 15000000,
         "price": 600000000,
-        "description": "Corrosive interstellar gas.",
-        "image": ""
+        "description": "Corrosive interstellar gas."
     },
     {
         "id": "gas_filter_pro",
         "name": "Nebula Filter",
         "type": "Defense",
-        "power": 5000,
+        "power": 15000000,
         "price": 600000000,
-        "description": "Neutralizes acidic gas attacks.",
-        "image": ""
+        "description": "Neutralizes acidic gas attacks."
+    },
+    {
+        "id": "blackhole_bomb",
+        "name": "Black Hole Bomb",
+        "type": "Attack",
+        "power": 30000000,
+        "price": 1000000000,
+        "description": "Absolute erasure of existence."
+    },
+    {
+        "id": "event_horizon",
+        "name": "Event Horizon",
+        "type": "Defense",
+        "power": 30000000,
+        "price": 1000000000,
+        "description": "Void shield that absorbs all energy."
     },
     {
         "id": "quasar_drill",
         "name": "Quasar Drill",
         "type": "Attack",
-        "power": 5000,
+        "power": 80000000,
         "price": 3500000000,
-        "description": "High-speed rotational energy beam.",
-        "image": ""
+        "description": "High-speed rotational energy beam."
     },
     {
         "id": "centrifuge_hull",
         "name": "Kinetic Hull",
         "type": "Defense",
-        "power": 5000,
+        "power": 80000000,
         "price": 3500000000,
-        "description": "Spins fast to deflect energy beams.",
-        "image": ""
+        "description": "Spins fast to deflect energy beams."
+    },
+    {
+        "id": "omega_ray",
+        "name": "Omega Ray",
+        "type": "Attack",
+        "power": 150000000,
+        "price": 5000000000,
+        "description": "The ultimate offensive beam."
+    },
+    {
+        "id": "god_barrier",
+        "name": "Aegis of the Ancients",
+        "type": "Defense",
+        "power": 150000000,
+        "price": 5000000000,
+        "description": "Indestructible divine protection."
+    },
+    {
+        "id": "quantum_scythe",
+        "name": "Quantum Scythe",
+        "type": "Attack",
+        "power": 500000000,
+        "price": 25000000000,
+        "description": "Cuts through realities."
+    },
+    {
+        "id": "multiverse_cloak",
+        "name": "Multiverse Cloak",
+        "type": "Defense",
+        "power": 500000000,
+        "price": 25000000000,
+        "description": "Shifts user between dimensions."
     },
     {
         "id": "big_bang_fist",
         "name": "The Big Bang",
         "type": "Attack",
-        "power": 5000,
+        "power": 2000000000,
         "price": 100000000000,
-        "description": "Creation through destruction.",
-        "image": ""
+        "description": "Creation through destruction."
     },
     {
         "id": "eternal_fortress",
         "name": "Eternal Fortress",
         "type": "Defense",
-        "power": 5000,
+        "power": 2000000000,
         "price": 100000000000,
-        "description": "Existence-level defensive shell.",
-        "image": ""
+        "description": "Existence-level defensive shell."
     }
 ]
