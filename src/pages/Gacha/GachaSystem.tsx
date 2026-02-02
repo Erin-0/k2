@@ -3,7 +3,6 @@ import { useAuth } from '../../context/AuthContext';
 import { db } from '../../firebase';
 import { collection, doc, getDocs, query, orderBy, limit, onSnapshot, getDoc } from 'firebase/firestore';
 import agentsData from '../../data/agents.json';
-import { formatNeuralCurrency } from '../../utils/formatters';
 
 // Components
 import { GachaNav } from './components/GachaNav';
@@ -20,23 +19,23 @@ import { useAgentActions } from './hooks/useAgentActions';
 import { useChat } from './hooks/useChat';
 
 // Types & Styles
-import type { Agent, AgentState, TabType, AlertState, ChatMessage } from './types';
+import type { Agent, AgentState, TabType, AlertState } from './types';
 import './styles/gacha.css';
 
 export const GachaSystem = () => {
     const { user, refreshUser } = useAuth();
-    
+
     // Navigation & Selection
     const [activeTab, setActiveTab] = useState<TabType>('home');
     const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
     const [viewingUser, setViewingUser] = useState<any | null>(null);
-    
+
     // Data
-    const [agents] = useState<Agent[]>(agentsData);
+    const [agents] = useState<Agent[]>(agentsData as Agent[]);
     const [agentStates, setAgentStates] = useState<Record<string, AgentState>>({});
     const [topUsers, setTopUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    
+
     // Alert State
     const [alert, setAlert] = useState<AlertState>({
         show: false,
@@ -58,13 +57,13 @@ export const GachaSystem = () => {
         }
     });
 
-    const { 
-        chatMessages, 
-        chatInput, 
-        setChatInput, 
-        isTyping, 
-        sendMessage, 
-        initializeChat 
+    const {
+        chatMessages,
+        chatInput,
+        setChatInput,
+        isTyping,
+        sendMessage,
+        initializeChat
     } = useChat(selectedAgent);
 
     // Initialize Data
@@ -144,11 +143,11 @@ export const GachaSystem = () => {
                 {/* HOME VIEW */}
                 {activeTab === 'home' && (
                     <div className="fade-in" style={{ paddingTop: '2rem' }}>
-                        <TopOperatives 
-                            users={topUsers} 
-                            onUserClick={handleViewUser} 
+                        <TopOperatives
+                            users={topUsers}
+                            onUserClick={handleViewUser}
                         />
-                        
+
                         <section>
                             <div className="section-header">
                                 <span className="section-header__icon">🔍</span>
