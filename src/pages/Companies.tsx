@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { doc, updateDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { Building2, ArrowLeft, Globe, TrendingUp, Hash, DollarSign, Trash2, X, Check } from 'lucide-react';
+import { doc, updateDoc, Timestamp } from 'firebase/firestore';
+import { Building2, Globe, DollarSign, Trash2, X, Check } from 'lucide-react';
 import companiesData from '../data/companys.json';
 import { formatNeuralCurrency } from '../utils/formatters';
 import { useTerminal } from '../context/TerminalContext';
@@ -22,7 +22,7 @@ export const Companies = () => {
     const [buying, setBuying] = useState(false);
     const [selling, setSelling] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+    const [sortOrder] = useState<'asc' | 'desc'>('desc');
 
     // Modal state
     const [sellConfirm, setSellConfirm] = useState<any>(null);
