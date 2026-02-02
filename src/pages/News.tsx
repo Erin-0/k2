@@ -167,18 +167,35 @@ export const News = () => {
                     <h1 className="text-gradient" style={{ fontSize: '1.8rem', margin: 0 }}>سجل النظام</h1>
                 </div>
 
-                <div className="flex bg-black/30 p-1 rounded-xl border border-white/5 backdrop-blur-sm">
+                <div className="flex bg-black/40 backdrop-blur-md p-1.5 rounded-xl border border-white/10 shadow-lg shadow-black/40">
                     <button
-                        className={`tab-btn ${activeTab === 'news' ? 'active' : ''}`}
+                        className={`
+            tab-btn flex-1 px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-200
+            flex items-center justify-center gap-2
+            ${activeTab === 'news'
+                                ? 'bg-gradient-to-r from-red-600/80 to-rose-600/60 text-white shadow-[0_0_15px_rgba(244,63,94,0.5)] border border-rose-500/40'
+                                : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                            }
+        `}
                         onClick={() => setActiveTab('news')}
                     >
-                        <Radio size={14} /> الأخبار
+                        <Radio size={18} className={activeTab === 'news' ? 'text-white' : ''} />
+                        <span>الأخبار</span>
                     </button>
+
                     <button
-                        className={`tab-btn ${activeTab === 'events' ? 'active' : ''}`}
+                        className={`
+            tab-btn flex-1 px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-200
+            flex items-center justify-center gap-2
+            ${activeTab === 'events'
+                                ? 'bg-gradient-to-r from-indigo-600/80 to-violet-600/60 text-white shadow-[0_0_15px_rgba(139,92,246,0.5)] border border-violet-500/40'
+                                : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                            }
+        `}
                         onClick={() => setActiveTab('events')}
                     >
-                        <Trophy size={14} /> الأحداث
+                        <Trophy size={18} className={activeTab === 'events' ? 'text-white' : ''} />
+                        <span>الأحداث</span>
                     </button>
                 </div>
             </header>
