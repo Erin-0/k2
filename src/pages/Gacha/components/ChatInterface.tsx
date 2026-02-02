@@ -1,4 +1,4 @@
-import { Send, X, Bot, User } from 'lucide-react';
+import { Send, X, Bot, User, Maximize2, Minimize2 } from 'lucide-react';
 import type { Agent, ChatMessage } from '../types';
 
 interface ChatInterfaceProps {
@@ -9,6 +9,8 @@ interface ChatInterfaceProps {
     onInputChange: (val: string) => void;
     onSend: () => void;
     onClose: () => void;
+    isExpanded: boolean;
+    onToggleExpand: () => void;
 }
 
 export const ChatInterface = ({
@@ -18,10 +20,12 @@ export const ChatInterface = ({
     isTyping,
     onInputChange,
     onSend,
-    onClose
+    onClose,
+    isExpanded,
+    onToggleExpand
 }: ChatInterfaceProps) => {
     return (
-        <div className="chat-interface fade-in">
+        <div className={`chat-interface fade-in ${isExpanded ? 'chat-interface--expanded' : ''}`}>
             <div className="chat-interface__header">
                 <div className="chat-interface__agent-info">
                     <div className="chat-interface__avatar v-clip-sm" style={{ borderColor: agent.color }}>
@@ -32,9 +36,14 @@ export const ChatInterface = ({
                         <span className="chat-interface__status">ارتباط عصبي نشط</span>
                     </div>
                 </div>
-                <button className="chat-interface__close" onClick={onClose}>
-                    <X size={20} />
-                </button>
+                <div className="chat-interface__actions">
+                    <button className="chat-interface__action-btn" onClick={onToggleExpand} title={isExpanded ? "تصغير" : "تكبير"}>
+                        {isExpanded ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+                    </button>
+                    <button className="chat-interface__close" onClick={onClose}>
+                        <X size={20} />
+                    </button>
+                </div>
             </div>
 
             <div className="chat-interface__messages">
@@ -60,8 +69,8 @@ export const ChatInterface = ({
 
             <div className="chat-interface__footer">
                 <div className="chat-interface__input-wrapper v-clip-sm">
-                    <input 
-                        type="text" 
+                    <input
+                        type="text"
                         value={input}
                         onChange={(e) => onInputChange(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && onSend()}
