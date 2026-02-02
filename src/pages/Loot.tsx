@@ -54,36 +54,60 @@ export const Loot = () => {
         if (!user) return;
         setLoading(true);
         try {
+            // 1. حساب التضخم
             const usersSnap = await getDocs(collection(db, "users"));
             let totalWealth = 0;
             usersSnap.forEach(d => totalWealth += (d.data().balance || 0));
             const factor = Math.max(1, totalWealth / W_INITIAL);
             setInflationFactor(factor);
 
+            // 2. جلب الموارد الحالية
             const currentResources: any = user.resources || {};
             RESOURCES_LIST.forEach(r => { if (!currentResources[r]) currentResources[r] = 0; });
-            setResources(currentResources);
 
-            const lastClaim = user.lastResourceClaim?.toDate() || new Date(0);
+            // 3. التحقق من تاريخ المطالبة
+            const lastClaimField = user.lastResourceClaim;
+
+            // إذا لم يسبق له المطالبة، نضع تاريخ "الآن" ونخرج لمنع الحساب الرجعي لعام 1970
+            if (!lastClaimField) {
+                await updateDoc(doc(db, "users", user.id), {
+                    lastResourceClaim: serverTimestamp()
+                });
+                setResources(currentResources);
+                setLoading(false);
+                return;
+            }
+
+            const lastClaim = lastClaimField.toDate();
             const now = new Date();
             const diffDays = Math.floor((now.getTime() - lastClaim.getTime()) / 86400000);
 
+            // 4. جلب عدد الأراضي
             const q = query(collection(db, "game_map"), where("ownerId", "==", user.id));
             const tilesSnap = await getDocs(q);
             const currentTileCount = tilesSnap.size;
             setTileCount(currentTileCount);
 
+            // 5. إضافة الموارد فقط إذا مر يوم كامل على الأقل
             if (diffDays > 0 && currentTileCount > 0) {
                 const amountToAdd = currentTileCount * diffDays;
                 const updatedResources = { ...currentResources };
-                RESOURCES_LIST.forEach(r => updatedResources[r] = (updatedResources[r] || 0) + amountToAdd);
-                await updateDoc(doc(db, "users", user.id), { resources: updatedResources, lastResourceClaim: serverTimestamp() });
+                RESOURCES_LIST.forEach(r => {
+                    updatedResources[r] = (updatedResources[r] || 0) + amountToAdd;
+                });
+
+                await updateDoc(doc(db, "users", user.id), {
+                    resources: updatedResources,
+                    lastResourceClaim: serverTimestamp()
+                });
+
                 setResources(updatedResources);
                 await refreshUser();
-            } else if (diffDays > 0) {
-                await updateDoc(doc(db, "users", user.id), { lastResourceClaim: serverTimestamp() });
+            } else {
+                setResources(currentResources);
             }
         } catch (error) {
+            console.error(error);
             showAlert("خطأ_في_البيانات: فشل استرداد البيانات الصناعية.");
         } finally {
             setLoading(false);
@@ -253,7 +277,7 @@ export const Loot = () => {
                     );
                 })}
             </div>
-            
+
             <style>{`
                 @media (max-width: 768px) {
                     .page-container { padding-bottom: 110px !important; }
