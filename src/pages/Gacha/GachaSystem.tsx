@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Groq from 'groq-sdk';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../firebase';
 import {
-    collection, doc, getDoc, getDocs, updateDoc, setDoc,
+    collection, doc, getDocs, updateDoc, setDoc,
     query, orderBy, limit, onSnapshot, serverTimestamp,
-    increment, arrayUnion, arrayRemove, Timestamp, runTransaction
+    increment, arrayUnion, Timestamp, runTransaction
 } from 'firebase/firestore';
 import {
     Shield, Zap, MessageSquare, TrendingUp,
