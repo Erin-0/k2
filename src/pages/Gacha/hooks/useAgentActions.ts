@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { db } from '../../../firebase';
-import { 
-    doc, updateDoc, setDoc, increment, 
-    arrayUnion, serverTimestamp, runTransaction, Timestamp 
+import {
+    doc, updateDoc, setDoc, increment,
+    arrayUnion, serverTimestamp, runTransaction, Timestamp
 } from 'firebase/firestore';
 import { formatNeuralCurrency } from '../../../utils/formatters';
 import type { Agent, AgentState, ContractStatus } from '../types';
@@ -15,13 +15,13 @@ interface UseAgentActionsProps {
 }
 
 export const useAgentActions = ({ user, agentStates, refreshUser, showAlert }: UseAgentActionsProps) => {
-    
+
     const getContractStatus = useCallback((agentId: string): ContractStatus | null => {
         const owned = user?.ownedAgents?.find((a: any) => a.id === agentId);
         if (!owned) return null;
 
-        const purchasedAt = owned.purchasedAt instanceof Timestamp 
-            ? owned.purchasedAt.toDate() 
+        const purchasedAt = owned.purchasedAt instanceof Timestamp
+            ? owned.purchasedAt.toDate()
             : (owned.purchasedAt || new Date());
         const days = owned.contractDays || 3;
         const expiry = new Date(purchasedAt.getTime() + (days * 86400000));
@@ -32,15 +32,15 @@ export const useAgentActions = ({ user, agentStates, refreshUser, showAlert }: U
             expired: remainingMs < 0,
             urgent: remainingHours < 24 && remainingHours > 0,
             remainingHours,
-            text: remainingMs < 0 
-                ? "عقد منتهي" 
+            text: remainingMs < 0
+                ? "عقد منتهي"
                 : `متبقي ${Math.floor(remainingHours / 24)} يوم و ${remainingHours % 24} ساعة`
         };
     }, [user]);
 
     const handlePurchase = useCallback(async (agent: Agent) => {
         if (!user) return;
-        
+
         const state = agentStates[agent.id];
         const price = state?.currentPrice || agent.basePrice;
 
@@ -61,7 +61,7 @@ export const useAgentActions = ({ user, agentStates, refreshUser, showAlert }: U
                         balance: increment(-price),
                         ownedAgents: arrayUnion({
                             id: agent.id,
-                            purchasedAt: serverTimestamp(),
+                            purchasedAt: Timestamp.now(),
                             contractDays: 3
                         })
                     });
@@ -88,7 +88,7 @@ export const useAgentActions = ({ user, agentStates, refreshUser, showAlert }: U
 
     const handleSteal = useCallback(async (agent: Agent) => {
         if (!user) return;
-        
+
         const state = agentStates[agent.id];
         if (!state?.ownerId) return;
 
@@ -124,7 +124,7 @@ export const useAgentActions = ({ user, agentStates, refreshUser, showAlert }: U
                             balance: increment(-stealCost),
                             ownedAgents: arrayUnion({
                                 id: agent.id,
-                                purchasedAt: serverTimestamp(),
+                                purchasedAt: Timestamp.now(),
                                 contractDays: 3
                             })
                         });
@@ -163,7 +163,7 @@ export const useAgentActions = ({ user, agentStates, refreshUser, showAlert }: U
 
     const handleRenew = useCallback(async (agent: Agent) => {
         if (!user) return;
-        
+
         const price = agentStates[agent.id]?.currentPrice || agent.basePrice;
         const renewCost = Math.floor(price * 0.6);
 
@@ -180,7 +180,7 @@ export const useAgentActions = ({ user, agentStates, refreshUser, showAlert }: U
                     await runTransaction(db, async (transaction) => {
                         const userRef = doc(db, 'users', user.id);
                         const userDoc = await transaction.get(userRef);
-                        
+
                         if (!userDoc.exists()) throw "User not found";
                         const userData = userDoc.data();
                         if (userData.balance < renewCost) throw "Insufficient funds";
@@ -211,7 +211,7 @@ export const useAgentActions = ({ user, agentStates, refreshUser, showAlert }: U
 
     const handleAbandon = useCallback(async (agent: Agent) => {
         if (!user) return;
-        
+
         const price = agentStates[agent.id]?.currentPrice || agent.basePrice;
         const refund = Math.floor(price * 0.5);
 
