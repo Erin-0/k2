@@ -25,6 +25,9 @@ export interface UserData {
     color: string;
     ownedCompanies?: any[];
     ownedWeapons?: any[];
+    weapons?: any[]; // For backward compatibility/consistency
+    territories?: any[];
+    loans?: any[];
     resources?: Record<string, number>;
     possessions?: Possession[];
     photoUrl?: string | null;
@@ -33,6 +36,18 @@ export interface UserData {
     gameStats?: Record<string, any>;
     language?: 'en' | 'fr' | 'ar';
     defenseScore?: number;
+    defenseUnits?: number;
+    recentWeapons?: any[];
+    activeWars?: number;
+    defensePower?: string;
+    dailyProduction?: string;
+    exportReady?: boolean;
+    assetsValue?: number;
+    rank?: number;
+    maxLoan?: number;
+    currentDebt?: number;
+    creditScore?: number;
+    recentTransfers?: any[];
 }
 
 
@@ -71,7 +86,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const data = snap.data();
                 let freshUser = { id: snap.id, ...data } as UserData;
 
-                // Earnings Logic
+                // Ensure weapons is synonymous with ownedWeapons
+                freshUser.weapons = data.ownedWeapons || [];
+
+                // 1. Earnings Logic
                 const lastCheck = data.lastEarningsCheck?.toDate() ? data.lastEarningsCheck.toDate() : new Date();
                 const now = new Date();
                 const diffMs = now.getTime() - lastCheck.getTime();
@@ -90,18 +108,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                             lastEarningsCheck: serverTimestamp()
                         });
                         freshUser.balance = newBalance;
-                        // Replace alert with console log or handle via toast in component
                         console.log(`Corporate Earnings: $${formatNeuralCurrency(totalEarned)}`);
                     }
                 }
 
-                // 2. Resource Generation Logic (+1 per tile per day)
+                // 2. Territories Logic
+                const qTiles = query(collection(db, "game_map"), where("ownerId", "==", userId));
+                const tilesSnap = await getDocs(qTiles);
+                const territories = tilesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                freshUser.territories = territories;
+
+                // 3. Resource Generation Logic (+1 per tile per day)
                 const lastResourceClaim = data.lastResourceClaim?.toDate() || data.createdAt?.toDate() || new Date();
                 const diffDaysRes = Math.floor((now.getTime() - lastResourceClaim.getTime()) / 86400000);
 
                 if (diffDaysRes > 0) {
-                    const qTiles = query(collection(db, "game_map"), where("ownerId", "==", userId));
-                    const tilesSnap = await getDocs(qTiles);
                     const tileCount = tilesSnap.size;
 
                     if (tileCount > 0) {
@@ -122,17 +143,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     }
                 }
 
-                // 3. Loan Penalty Logic (Balance = 0 if overdue)
-                const qLoans = query(collection(db, "loans"), where("borrowerId", "==", userId), where("status", "==", "active"));
+                // 4. Loans Logic
+                const qLoans = query(collection(db, "loans"), where("borrowerId", "==", userId));
                 const loansSnap = await getDocs(qLoans);
-                let hasOverdue = false;
+                const allLoans = loansSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                freshUser.loans = allLoans;
 
+                let hasOverdue = false;
                 for (const loanDoc of loansSnap.docs) {
                     const loan = loanDoc.data();
-                    const deadline = loan.deadline?.toDate();
-                    if (deadline && now > deadline) {
-                        hasOverdue = true;
-                        await updateDoc(doc(db, "loans", loanDoc.id), { status: 'overdue' });
+                    if (loan.status === 'active') {
+                        const deadline = loan.deadline?.toDate();
+                        if (deadline && now > deadline) {
+                            hasOverdue = true;
+                            await updateDoc(doc(db, "loans", loanDoc.id), { status: 'overdue' });
+                        }
                     }
                 }
 
