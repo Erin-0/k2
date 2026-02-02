@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, getDocs, doc, runTransaction, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
-import { ArrowRightLeft, Send, Users, Activity, Zap, ShieldCheck } from 'lucide-react';
+import { ArrowRightLeft, Send, Users, Activity, Zap, ShieldCheck, Eye } from 'lucide-react';
 
 export const Transfers = () => {
     const { user, refreshUser } = useAuth();
@@ -14,11 +14,24 @@ export const Transfers = () => {
 
     useEffect(() => {
         const fetchUsers = async () => {
-            const snap = await getDocs(collection(db, "users"));
-            setRecipients(snap.docs.filter(d => d.id !== user?.id).map(d => ({ id: d.id, ...d.data() })));
+            try {
+                const snap = await getDocs(collection(db, "users"));
+                setRecipients(snap.docs
+                    .filter(d => d.id !== user?.id)
+                    .map(d => ({ id: d.id, ...d.data() }))
+                );
+            } catch (err) {
+                console.error("Error fetching users:", err);
+            }
         };
         fetchUsers();
     }, [user]);
+
+    // دالة لتنسيق الأرقام بالفواصل للعرض فقط
+    const formatNumber = (val: number | string) => {
+        if (!val || isNaN(Number(val))) return "0";
+        return Number(val).toLocaleString('en-US');
+    };
 
     const sendMoney = async () => {
         const numAmount = Number(amount);
@@ -32,12 +45,15 @@ export const Transfers = () => {
                 const senderRef = doc(db, "users", user!.id);
                 const receiverRef = doc(db, "users", targetId);
                 const receiverSnap = await transaction.get(receiverRef);
+                
                 if (!receiverSnap.exists()) throw new Error("الهدف غير موجود في الشبكة.");
 
-                const targetName = receiverSnap.data()?.username;
+                const targetData = receiverSnap.data();
+                const targetName = targetData?.username;
                 const senderBalance = (user?.balance || 0) - numAmount;
+                
                 transaction.update(senderRef, { balance: senderBalance });
-                transaction.update(receiverRef, { balance: (receiverSnap.data()?.balance || 0) + numAmount });
+                transaction.update(receiverRef, { balance: (targetData?.balance || 0) + numAmount });
 
                 transaction.set(doc(collection(db, "activities")), {
                     userId: user?.id,
@@ -57,7 +73,7 @@ export const Transfers = () => {
                     type: 'uplink',
                     username: user?.username,
                     userColor: user?.color,
-                    content: `قام العميل ${user?.username} بإجراء تحويل مالي ضخم إلى ${recipients.find(r => r.id === targetId)?.username}.`,
+                    content: `قام العميل ${user?.username} بإجراء تحويل مالي ضخم إلى ${targetName}.`,
                     value: numAmount,
                     timestamp: serverTimestamp()
                 });
@@ -89,7 +105,6 @@ export const Transfers = () => {
                 </div>
             </div>
 
-            {/* Mobile Layout Stacking */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 
                 {/* Deployment configuration */}
@@ -100,27 +115,49 @@ export const Transfers = () => {
                         <h3 className="micro-label" style={{ fontSize: '0.75rem' }}>معلمات التفويض</h3>
                     </div>
 
-                    <div style={{ background: 'rgba(0,0,0,0.3)', padding: '2rem 1rem', borderRadius: '20px', border: '1px solid var(--border-dim)', textAlign: 'center' }}>
+                    <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1.5rem 1rem', borderRadius: '20px', border: '1px solid var(--border-dim)', textAlign: 'center' }}>
                         <p className="micro-label" style={{ marginBottom: '0.5rem', opacity: 0.5, fontSize: '0.6rem' }}>إدخال الحجم الكمي ($)</p>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <span className="mono" style={{ fontSize: '1.5rem', opacity: 0.3, marginRight: '5px' }}>$</span>
-                            <input
-                                type="number"
-                                placeholder="0.00"
-                                value={amount}
-                                onChange={e => setAmount(e.target.value)}
-                                className="mono"
-                                style={{
-                                    background: 'transparent',
-                                    border: 'none',
-                                    fontSize: '2.5rem',
-                                    textAlign: 'center',
-                                    width: '100%',
-                                    fontWeight: '900',
-                                    color: 'white',
-                                    outline: 'none'
-                                }}
-                            />
+                        
+                        <div style={{ position: 'relative' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <span className="mono" style={{ fontSize: '1.5rem', opacity: 0.3, marginRight: '5px' }}>$</span>
+                                <input
+                                    type="number"
+                                    placeholder="0"
+                                    value={amount}
+                                    onChange={e => setAmount(e.target.value)}
+                                    className="mono"
+                                    style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        fontSize: '2.5rem',
+                                        textAlign: 'center',
+                                        width: '100%',
+                                        fontWeight: '900',
+                                        color: 'white',
+                                        outline: 'none'
+                                    }}
+                                />
+                            </div>
+
+                            {/* Live Preview / معاينة حية بالفواصل */}
+                            {amount && (
+                                <div className="fade-in" style={{ 
+                                    marginTop: '10px', 
+                                    padding: '4px 12px', 
+                                    background: 'rgba(var(--primary-rgb), 0.1)', 
+                                    borderRadius: '8px',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    border: '1px dashed var(--primary)'
+                                }}>
+                                    <Eye size={12} color="var(--primary)" />
+                                    <span className="mono" style={{ color: 'var(--primary)', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                                        ${formatNumber(amount)}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -138,7 +175,7 @@ export const Transfers = () => {
                     </div>
                 </div>
 
-                {/* Target selector - Optimized for mobile scroll */}
+                {/* Target selector */}
                 <div className="card card-glow" style={{ padding: '1.5rem', border: '1px solid var(--border-dim)', borderRadius: '24px', maxHeight: '400px', display: 'flex', flexDirection: 'column' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
                         <Users size={18} color="var(--accent)" />
@@ -147,7 +184,7 @@ export const Transfers = () => {
 
                     <div className="custom-scrollbar" style={{ flex: 1, overflowY: 'auto' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                            {recipients.map(r => (
+                            {recipients.length > 0 ? recipients.map(r => (
                                 <div
                                     key={r.id}
                                     onClick={() => setTargetId(r.id)}
@@ -164,7 +201,7 @@ export const Transfers = () => {
                                 >
                                     <div style={{
                                         width: '40px', height: '40px', borderRadius: '10px',
-                                        background: r.color,
+                                        background: r.color || 'var(--primary)',
                                         overflow: 'hidden', flexShrink: 0
                                     }}>
                                         {r.photoUrl ? (
@@ -175,13 +212,15 @@ export const Transfers = () => {
                                             </div>
                                         )}
                                     </div>
-                                    <div style={{ marginLeft: '1rem', minWidth: 0 }}>
+                                    <div style={{ marginLeft: '1rem', marginRight: '1rem', minWidth: 0, flex: 1 }}>
                                         <p className="mono" style={{ fontSize: '0.85rem', marginBottom: '0.1rem', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.username}</p>
                                         <p className="micro-label" style={{ fontSize: '0.5rem', opacity: 0.4 }}>ID: {r.id.substring(0, 8).toUpperCase()}</p>
                                     </div>
-                                    {targetId === r.id && <Zap size={14} color="var(--primary)" style={{ marginLeft: 'auto' }} />}
+                                    {targetId === r.id && <Zap size={14} color="var(--primary)" />}
                                 </div>
-                            ))}
+                            )) : (
+                                <p style={{ textAlign: 'center', opacity: 0.5, fontSize: '0.8rem' }}>جاري البحث عن أهداف في الشبكة...</p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -220,7 +259,8 @@ export const Transfers = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '0.75rem',
-                        borderRadius: '16px'
+                        borderRadius: '16px',
+                        cursor: (loading || !targetId || !amount) ? 'not-allowed' : 'pointer'
                     }}
                 >
                     {loading ? 'جاري_تعديل_الارتباط...' : 'تفويض نشر رأس المال'}
@@ -233,6 +273,13 @@ export const Transfers = () => {
                     .page-container { padding-bottom: 120px !important; }
                 }
                 .custom-scrollbar::-webkit-scrollbar { width: 3px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border-bright); borderRadius: 10px; }
+                
+                input[type=number]::-webkit-inner-spin-button, 
+                input[type=number]::-webkit-outer-spin-button { 
+                    -webkit-appearance: none; 
+                    margin: 0; 
+                }
             `}</style>
         </div>
     );
