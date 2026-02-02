@@ -27,7 +27,7 @@ import {
   Pickaxe, Landmark, Store, Trophy, Gem, Zap, Crown, ShieldAlert, Newspaper
 } from 'lucide-react';
 
-const EMERGENCY_MODE = true;
+const EMERGENCY_MODE = false;
 const EMERGENCY_MSG = "تم اكتشاف عطل داخلي في صفحة تحويلات وباقي صفحات. المرجو انتضار التصحيح ورابط الجديد.";
 
 
