@@ -47,7 +47,7 @@ interface ChatMessage {
     timestamp: Date;
 }
 
-const GROQ_API_KEY = "REPLACE_WITH_YOUR_KEY_HERE"; // 
+const GROQ_API_KEY = "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"; // 
 
 export const GachaSystem = () => {
     const { user, refreshUser } = useAuth();
@@ -1056,3 +1056,4 @@ export const GachaSystem = () => {
         </div>
     );
 };
+
