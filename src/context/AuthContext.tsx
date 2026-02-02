@@ -3,7 +3,11 @@ import { db, auth } from '../firebase';
 
 
 
-import { doc, getDoc, updateDoc, serverTimestamp, collection, query, where, getDocs } from 'firebase/firestore';
+import {
+    collection, doc, getDoc, getDocs, updateDoc,
+    serverTimestamp, query, where, increment
+} from 'firebase/firestore';
+import agentsData from '../data/agents.json';
 
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 
@@ -48,6 +52,7 @@ export interface UserData {
     currentDebt?: number;
     creditScore?: number;
     recentTransfers?: any[];
+    ownedAgents?: any[];
 }
 
 
@@ -153,6 +158,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 if (hasOverdue && (freshUser.balance || 0) > 0) {
                     await updateDoc(userRef, { balance: 0 });
                     freshUser.balance = 0;
+                }
+
+                // 5. Agent Earnings Logic
+                const diffDaysEarn = Math.floor((now.getTime() - (data.lastEarningsCheck?.toDate()?.getTime() || now.getTime())) / 86400000);
+                if (diffDaysEarn > 0 && data.ownedAgents?.length > 0) {
+                    let totalYield = 0;
+                    data.ownedAgents.forEach((a: any) => {
+                        const agentInfo = (agentsData as any[]).find((ad: any) => ad.id === a.id);
+                        if (agentInfo) totalYield += agentInfo.dailyYield * diffDaysEarn;
+                    });
+
+                    if (totalYield > 0) {
+                        await updateDoc(userRef, {
+                            balance: increment(totalYield),
+                            lastEarningsCheck: serverTimestamp()
+                        });
+                        freshUser.balance = (freshUser.balance || 0) + totalYield;
+                    }
                 }
 
                 setUser(freshUser);
