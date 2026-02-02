@@ -1,4 +1,4 @@
-import { ArrowLeft, Package, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Package } from 'lucide-react';
 import { AgentCard } from './AgentCard';
 import type { Agent, OwnedAgent, ContractStatus } from '../types';
 
@@ -55,9 +55,9 @@ export const Inventory = ({
                 <div className="agents-grid">
                     {agents.map(agent => (
                         <div key={agent.id} className="inventory__item">
-                            <AgentCard 
-                                agent={agent} 
-                                onClick={() => onAgentClick(agent.id)} 
+                            <AgentCard
+                                agent={agent}
+                                onClick={() => onAgentClick(agent.id)}
                             />
                             {agent.contract && (
                                 <div className={`inventory__contract-badge ${agent.contract.urgent ? 'urgent' : ''}`}>
