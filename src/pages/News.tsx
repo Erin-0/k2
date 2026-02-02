@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp, updateDoc, doc, arrayUnion } from 'firebase/firestore';
-import { Radio, TrendingUp, Sword, Home, Landmark, ArrowRightLeft, Calendar, Plus, Trophy, Clock, Image as ImageIcon, Users, CheckCircle, ShieldAlert } from 'lucide-react';
+import { Radio, TrendingUp, Sword, Home, Landmark, ArrowRightLeft, Plus, Trophy, Clock, Image as ImageIcon, Users, CheckCircle, ShieldAlert, Zap, Globe, Activity } from 'lucide-react';
 import { formatNeuralCurrency } from '../utils/formatters';
 import { useAuth } from '../context/AuthContext';
 
@@ -30,12 +30,23 @@ interface EventItem {
 
 const NewsIcon = ({ type }: { type: string }) => {
     switch (type) {
-        case 'acquisition': return <Home size={18} color="var(--primary)" />;
-        case 'conflict': return <Sword size={18} color="var(--danger)" />;
-        case 'uplink': return <ArrowRightLeft size={18} color="#a855f7" />;
-        case 'loan': return <Landmark size={18} color="var(--warning)" />;
-        case 'commerce': return <TrendingUp size={18} color="var(--success)" />;
-        default: return <Radio size={18} color="var(--primary)" />;
+        case 'acquisition': return <Home size={16} />;
+        case 'conflict': return <Sword size={16} />;
+        case 'uplink': return <ArrowRightLeft size={16} />;
+        case 'loan': return <Landmark size={16} />;
+        case 'commerce': return <TrendingUp size={16} />;
+        default: return <Activity size={16} />;
+    }
+};
+
+const getIconColor = (type: string) => {
+    switch (type) {
+        case 'acquisition': return 'var(--primary)';
+        case 'conflict': return 'var(--danger)';
+        case 'uplink': return '#a855f7';
+        case 'loan': return 'var(--warning)';
+        case 'commerce': return 'var(--success)';
+        default: return 'var(--text-muted)';
     }
 };
 
@@ -131,11 +142,11 @@ export const News = () => {
         const target = date?.toDate ? date.toDate().getTime() : new Date(date).getTime();
         const diff = target - now;
 
-        if (diff < 0) return "انتهى الحدث";
+        if (diff < 0) return "منتهي";
 
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
         const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        return `${days} يوم و ${hours} ساعة`;
+        return `${days} يوم ${hours} ساعة`;
     };
 
     if (loading) return (
@@ -145,170 +156,163 @@ export const News = () => {
     );
 
     return (
-        <div className="page-container fade-in" style={{ padding: '1rem' }}>
+        <div className="page-container fade-in" style={{ padding: '0.75rem' }}>
             {/* Header */}
-            <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+            <header className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                        <div className="pulse-indicator" style={{ background: 'var(--danger)', width: '6px', height: '6px' }}></div>
-                        <p className="micro-label" style={{ color: 'var(--danger)', fontSize: '0.6rem', letterSpacing: '2px' }}>نظام_الأحداث_العالمي</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <div className="pulse-indicator"></div>
+                        <p className="micro-label" style={{ color: 'var(--primary)', fontSize: '0.6rem', letterSpacing: '2px' }}>محطة_البث_العالمية</p>
                     </div>
-                    <div className="flex gap-4 mt-2">
-                        <button
-                            className={`tab-btn ${activeTab === 'news' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('news')}
-                        >
-                            البث المباشر
-                        </button>
-                        <button
-                            className={`tab-btn ${activeTab === 'events' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('events')}
-                        >
-                            الأحداث الكبرى
-                        </button>
-                    </div>
+                    <h1 className="text-gradient" style={{ fontSize: '1.8rem', margin: 0 }}>سجل النظام</h1>
                 </div>
-                {activeTab === 'events' && (
-                    <button className="btn-icon" onClick={() => setShowAuthModal(true)}>
-                        <Plus size={20} /> إضافة حدث جديد
+
+                <div className="flex bg-black/30 p-1 rounded-xl border border-white/5 backdrop-blur-sm">
+                    <button
+                        className={`tab-btn ${activeTab === 'news' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('news')}
+                    >
+                        <Radio size={14} /> الأخبار
                     </button>
-                )}
+                    <button
+                        className={`tab-btn ${activeTab === 'events' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('events')}
+                    >
+                        <Trophy size={14} /> الأحداث
+                    </button>
+                </div>
             </header>
 
             {/* NEWS FEED */}
             {activeTab === 'news' && (
-                <div className="news-feed flex flex-col gap-4">
-                    {news.map((item) => (
-                        <div key={item.id} className="card card-glow news-card relative overflow-hidden p-4 rounded-xl"
-                            style={{ borderLeft: `3px solid ${item.userColor || 'var(--primary)'}`, background: 'rgba(255,255,255,0.01)' }}>
-                            <div className="scanline opacity-5"></div>
-                            <div className="flex gap-4 items-start">
-                                <div className="news-icon-box bg-black/30 p-3 rounded-lg border border-white/10 shrink-0">
-                                    <NewsIcon type={item.type} />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <span className="mono font-bold text-sm" style={{ color: item.userColor }}>@{item.username.toUpperCase()}</span>
-                                        <span className="mono text-xs opacity-40">{item.timestamp?.toDate()?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                <div className="news-feed-container">
+                    <div className="feed-line"></div>
+                    {news.map((item, index) => (
+                        <div key={item.id} className="news-item-wrapper fade-in" style={{ animationDelay: `${index * 0.05}s` }}>
+                            <div className="timeline-dot" style={{ borderColor: getIconColor(item.type) }}></div>
+                            <div className="card card-glow news-card">
+                                <div className="news-header">
+                                    <div className="user-badge" style={{ borderColor: item.userColor }}>
+                                        <div className="avatar-placeholder" style={{ background: item.userColor }}>
+                                            {item.username.charAt(0).toUpperCase()}
+                                        </div>
+                                        <span className="username mono">{item.username}</span>
                                     </div>
-                                    <p className="text-sm opacity-90 leading-relaxed mb-2 text-right">{item.content}</p>
-                                    {item.value && (
-                                        <span className="status-badge connected text-xs px-2 py-1 inline-block">
-                                            {typeof item.value === 'number' ? `$${formatNeuralCurrency(item.value)}` : item.value}
-                                        </span>
-                                    )}
+                                    <span className="timestamp mono">
+                                        {item.timestamp?.toDate()?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
                                 </div>
+
+                                <div className="news-content">
+                                    <div className="icon-wrapper" style={{ color: getIconColor(item.type), background: `${getIconColor(item.type)}20` }}>
+                                        <NewsIcon type={item.type} />
+                                    </div>
+                                    <p className="message">{item.content}</p>
+                                </div>
+
+                                {item.value && (
+                                    <div className="news-footer">
+                                        <div className="value-chip">
+                                            <span className="label">القيمة:</span>
+                                            <span className="val mono">{typeof item.value === 'number' ? formatNeuralCurrency(item.value) : item.value}</span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}
-                    {news.length === 0 && (
-                        <div className="text-center py-16 opacity-30">
-                            <Radio size={40} className="mx-auto mb-4" />
-                            <p className="micro-label">لا توجد إشارات بث حالية...</p>
-                        </div>
-                    )}
                 </div>
             )}
 
             {/* EVENTS FEED */}
             {activeTab === 'events' && (
-                <div className="events-feed grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
-                    {events.map(event => (
-                        <div key={event.id} className="event-card group relative rounded-2xl overflow-hidden border border-purple-500/20 bg-black/40 hover:border-purple-500 transition-all shadow-lg hover:shadow-purple-500/20">
-                            {/* Background Image */}
-                            <div className="absolute inset-0 z-0">
-                                <img src={event.cardImage} alt="" className="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity transform group-hover:scale-105 duration-1000" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
-                            </div>
+                <div className="events-container pb-20">
+                    <div className="events-actions mb-6 flex justify-end">
+                        <button className="create-event-btn" onClick={() => setShowAuthModal(true)}>
+                            <Plus size={16} /> إضافة حدث جديد
+                        </button>
+                    </div>
 
-                            {/* Content */}
-                            <div className="relative z-10 p-6 h-full flex flex-col min-h-[400px]">
-                                <div className="flex justify-between items-start mb-4">
-                                    <span className="bg-purple-600/20 text-purple-300 border border-purple-500/30 px-3 py-1 rounded text-xs font-bold uppercase tracking-wider backdrop-blur-md shadow-sm">
-                                        حدث رسمي
-                                    </span>
-                                    <div className="flex flex-col items-end bg-black/40 p-2 rounded backdrop-blur">
-                                        <span className="text-xs text-purple-200 mb-1 flex items-center gap-1 font-mono"><Clock size={12} /> {getTimeLeft(event.startTime)}</span>
-                                        <span className="text-xs text-gray-400 flex items-center gap-1"><Users size={12} /> {event.participants?.length || 0} مشارك</span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                        {events.map(event => (
+                            <div key={event.id} className="event-card-modern group">
+                                <div className="card-image-wrapper">
+                                    <img src={event.cardImage} alt="" className="card-bg" />
+                                    <div className="card-overlay"></div>
+                                    <div className="card-meta">
+                                        <div className="meta-badge"><Clock size={12} /> {getTimeLeft(event.startTime)}</div>
+                                        <div className="meta-badge"><Users size={12} /> {event.participants?.length || 0}</div>
                                     </div>
                                 </div>
 
-                                <h2 className="text-3xl font-black uppercase text-white mb-2 leading-tight drop-shadow-xl font-['Cairo']">{event.title}</h2>
-                                <p className="text-gray-300 text-sm line-clamp-3 mb-6 bg-black/30 p-3 rounded backdrop-blur-sm border-r-2 border-purple-500">{event.description}</p>
+                                <div className="card-body">
+                                    <h2 className="event-title">{event.title}</h2>
+                                    <p className="event-desc">{event.description}</p>
 
-                                <div className="mt-auto space-y-4">
-                                    {/* Prizes */}
-                                    <div className="prizes grid grid-cols-3 gap-2 text-center my-4">
-                                        <div className="prize-box bg-gradient-to-b from-yellow-500/10 to-transparent border border-yellow-500/20 rounded p-2">
-                                            <Trophy size={16} className="mx-auto text-yellow-400 mb-1" />
-                                            <span className="block text-xs text-yellow-200 font-mono font-bold">{event.prizes.first}</span>
+                                    <div className="prizes-grid">
+                                        <div className="prize-item gold">
+                                            <div className="rank">1</div>
+                                            <div className="amount mono">{event.prizes.first}</div>
                                         </div>
-                                        <div className="prize-box bg-gradient-to-b from-gray-400/10 to-transparent border border-gray-400/20 rounded p-2 pt-4">
-                                            <span className="block text-[10px] text-gray-500 font-bold mb-1">المركز 2</span>
-                                            <span className="block text-xs text-gray-300 font-mono">{event.prizes.second}</span>
+                                        <div className="prize-item silver">
+                                            <div className="rank">2</div>
+                                            <div className="amount mono">{event.prizes.second}</div>
                                         </div>
-                                        <div className="prize-box bg-gradient-to-b from-orange-700/10 to-transparent border border-orange-700/20 rounded p-2 pt-4">
-                                            <span className="block text-[10px] text-orange-500 font-bold mb-1">المركز 3</span>
-                                            <span className="block text-xs text-orange-300 font-mono">{event.prizes.third}</span>
+                                        <div className="prize-item bronze">
+                                            <div className="rank">3</div>
+                                            <div className="amount mono">{event.prizes.third}</div>
                                         </div>
                                     </div>
 
                                     <button
-                                        className={`w-full font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all transform active:scale-95 ${event.participants?.includes(user?.id || '')
-                                                ? 'bg-green-500/20 text-green-400 border border-green-500/30 cursor-default'
-                                                : 'bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/40 hover:shadow-purple-600/40'
-                                            }`}
+                                        className={`join-btn ${event.participants?.includes(user?.id || '') ? 'joined' : ''}`}
                                         onClick={() => handleJoinEvent(event.id)}
                                         disabled={event.participants?.includes(user?.id || '')}
                                     >
                                         {event.participants?.includes(user?.id || '') ? (
-                                            <><CheckCircle size={18} /> تم تسجيلك بنجاح</>
+                                            <>
+                                                <CheckCircle size={16} />
+                                                <span>مسجل في الحدث</span>
+                                            </>
                                         ) : (
-                                            <><Calendar size={18} /> الاشتراك في التحدي</>
+                                            <>
+                                                <Zap size={16} />
+                                                <span>تسجيل المشاركة</span>
+                                            </>
                                         )}
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-
-                    {events.length === 0 && (
-                        <div className="col-span-full text-center py-20 opacity-30 border-2 border-dashed border-gray-700 rounded-xl">
-                            <Calendar size={64} className="mx-auto mb-4 text-purple-500" />
-                            <p className="text-xl">لا توجد أحداث كبرى نشطة حالياً</p>
-                            <p className="text-sm mt-2">ترقب التحديثات القادمة من الإدارة العليا</p>
-                        </div>
-                    )}
+                        ))}
+                    </div>
                 </div>
             )}
 
             {/* AUTH MODAL */}
             {showAuthModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-                    <div className="auth-modal bg-[#0f0f0f] border border-purple-500/30 p-8 rounded-2xl w-full max-w-sm relative overflow-hidden shadow-2xl shadow-purple-900/20">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600"></div>
-                        <ShieldAlert size={48} className="mx-auto text-purple-500 mb-4 opacity-80" />
-                        <h3 className="text-xl font-bold mb-2 text-center text-white">
-                            {authStep === 'code' ? 'بروتوكول المسؤولين' : 'سؤال الأمان الإضافي'}
-                        </h3>
-                        <p className="text-center text-xs text-gray-500 mb-6">مطلوب تصريح أمني من المستوى 5</p>
+                <div className="modal-overlay">
+                    <div className="modal-content auth-modal">
+                        <div className="modal-header">
+                            <ShieldAlert size={24} className="text-danger" />
+                            <h3>بروتوكول المسؤولين</h3>
+                        </div>
+                        <p className="modal-desc">أدخل رمز الوصول المصرح به للمتابعة.</p>
 
-                        {authStep === 'code' && (
+                        {authStep === 'code' ? (
                             <input
                                 type="password"
-                                className="w-full bg-black/50 border border-zinc-700 rounded-lg p-3 mb-4 text-center font-mono tracking-[0.5em] text-xl focus:border-purple-500 focus:outline-none transition-colors text-white"
+                                className="auth-input mono"
                                 placeholder="******"
                                 value={authCode}
                                 onChange={e => setAuthCode(e.target.value)}
                                 autoFocus
                             />
-                        )}
-                        {authStep === 'question' && (
-                            <div className="mb-4">
-                                <p className="mb-3 text-sm text-purple-300 font-bold text-center bg-purple-900/20 p-2 rounded">"ايه اقوى شخصية؟"</p>
+                        ) : (
+                            <div className="security-question">
+                                <p className="question">"من هو الأقوى؟"</p>
                                 <input
                                     type="text"
-                                    className="w-full bg-black/50 border border-zinc-700 rounded-lg p-3 focus:border-purple-500 focus:outline-none transition-colors text-center text-white"
+                                    className="auth-input"
                                     placeholder="الإجابة..."
                                     value={authCode}
                                     onChange={e => setAuthCode(e.target.value)}
@@ -316,13 +320,10 @@ export const News = () => {
                                 />
                             </div>
                         )}
-                        <div className="flex flex-col gap-2 mt-4">
-                            <button className="w-full py-3 bg-purple-600 rounded-lg font-bold hover:bg-purple-500 transition-colors shadow-lg shadow-purple-900/30 text-white" onClick={handleAuthSubmit}>
-                                التحقق من الهوية
-                            </button>
-                            <button className="w-full py-2 text-gray-500 hover:text-white transition-colors text-sm" onClick={() => { setShowAuthModal(false); setAuthStep('code'); setAuthCode(''); }}>
-                                إلغاء العملية
-                            </button>
+
+                        <div className="modal-actions">
+                            <button className="cancel-btn" onClick={() => setShowAuthModal(false)}>إلغاء</button>
+                            <button className="confirm-btn" onClick={handleAuthSubmit}>تحقق</button>
                         </div>
                     </div>
                 </div>
@@ -330,157 +331,373 @@ export const News = () => {
 
             {/* CREATE EVENT MODAL */}
             {showEventModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 overflow-y-auto">
-                    <div className="bg-[#0f0f0f] border border-purple-500/30 p-6 rounded-2xl w-full max-w-2xl my-8 shadow-2xl relative">
-                        <button className="absolute top-4 left-4 text-gray-500 hover:text-white" onClick={() => setShowEventModal(false)}><Plus className="rotate-45" /></button>
+                <div className="modal-overlay">
+                    <div className="modal-content create-event-modal custom-scrollbar">
+                        <div className="modal-header">
+                            <Globe size={24} className="text-primary" />
+                            <h3>إطلاق حدث عالمي</h3>
+                        </div>
 
-                        <div className="flex items-center gap-3 mb-8 border-b border-white/5 pb-4">
-                            <div className="p-2 bg-purple-600/20 rounded-lg"><Calendar className="text-purple-400" /></div>
-                            <div>
-                                <h2 className="text-xl font-bold text-white">إنشاء حدث جديد</h2>
-                                <p className="text-xs text-gray-500">نشر حدث عالمي لجميع المستخدمين</p>
+                        <div className="form-grid">
+                            <div className="form-group full">
+                                <label>عنوان الحدث</label>
+                                <input type="text" value={newEvent.title} onChange={e => setNewEvent({ ...newEvent, title: e.target.value })} placeholder="العنوان الرئيسي..." />
+                            </div>
+
+                            <div className="form-group full">
+                                <label>وصف الحدث</label>
+                                <textarea value={newEvent.description} onChange={e => setNewEvent({ ...newEvent, description: e.target.value })} placeholder="تفاصيل الحدث..." />
+                            </div>
+
+                            <div className="form-group full">
+                                <label>وقت البدء</label>
+                                <input type="datetime-local" value={newEvent.startTime} onChange={e => setNewEvent({ ...newEvent, startTime: e.target.value })} />
+                            </div>
+
+                            <div className="form-group full section-label">
+                                <Trophy size={14} /> الجوائز والمكافآت
+                            </div>
+
+                            <div className="form-group">
+                                <label className="gold-text">المركز الأول</label>
+                                <input type="text" className="mono text-center" value={newEvent.prize1} onChange={e => setNewEvent({ ...newEvent, prize1: e.target.value })} placeholder="$0" />
+                            </div>
+                            <div className="form-group">
+                                <label className="silver-text">المركز الثاني</label>
+                                <input type="text" className="mono text-center" value={newEvent.prize2} onChange={e => setNewEvent({ ...newEvent, prize2: e.target.value })} placeholder="$0" />
+                            </div>
+                            <div className="form-group">
+                                <label className="bronze-text">المركز الثالث</label>
+                                <input type="text" className="mono text-center" value={newEvent.prize3} onChange={e => setNewEvent({ ...newEvent, prize3: e.target.value })} placeholder="$0" />
+                            </div>
+
+                            <div className="form-group full section-label">
+                                <ImageIcon size={14} /> الوسائط
+                            </div>
+
+                            <div className="form-group full">
+                                <label>رابط الصورة (URL)</label>
+                                <input type="text" className="mono" value={newEvent.cardImage} onChange={e => setNewEvent({ ...newEvent, cardImage: e.target.value })} placeholder="https://..." />
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                            <div className="col-span-full">
-                                <label className="text-xs text-gray-400 mb-1 block font-bold">عنوان الحدث</label>
-                                <input type="text" className="modal-input w-full" value={newEvent.title} onChange={e => setNewEvent({ ...newEvent, title: e.target.value })} placeholder="مثال: بطولة القمة - الموسم الأول" />
-                            </div>
-
-                            <div className="col-span-full">
-                                <label className="text-xs text-gray-400 mb-1 block font-bold">الوصف</label>
-                                <textarea className="modal-input w-full h-24 resize-none" value={newEvent.description} onChange={e => setNewEvent({ ...newEvent, description: e.target.value })} placeholder="تفاصيل الحدث والقصة الخلفية..." />
-                            </div>
-
-                            <div className="col-span-full">
-                                <label className="text-xs text-gray-400 mb-1 block font-bold">القواعد والشروط (اختياري)</label>
-                                <textarea className="modal-input w-full h-20 resize-none" value={newEvent.rules} onChange={e => setNewEvent({ ...newEvent, rules: e.target.value })} placeholder="قواعد المشاركة، الممنوعات، طريقة الفوز..." />
-                            </div>
-
-                            <div className="col-span-full">
-                                <label className="text-xs text-gray-400 mb-1 block font-bold">موعد البدء</label>
-                                <input type="datetime-local" className="modal-input w-full" value={newEvent.startTime} onChange={e => setNewEvent({ ...newEvent, startTime: e.target.value })} />
-                            </div>
-                        </div>
-
-                        <div className="mb-6 bg-purple-900/10 p-4 rounded-xl border border-purple-500/10">
-                            <label className="text-xs text-purple-400 mb-3 block font-bold flex items-center gap-2"><Trophy size={14} /> الجوائز والمكافآت</label>
-                            <div className="grid grid-cols-3 gap-3">
-                                <div>
-                                    <span className="text-[10px] text-yellow-500 block mb-1">المركز الأول</span>
-                                    <input type="text" className="modal-input w-full text-center" placeholder="$1,000,000" value={newEvent.prize1} onChange={e => setNewEvent({ ...newEvent, prize1: e.target.value })} />
-                                </div>
-                                <div>
-                                    <span className="text-[10px] text-gray-400 block mb-1">المركز الثاني</span>
-                                    <input type="text" className="modal-input w-full text-center" placeholder="$500,000" value={newEvent.prize2} onChange={e => setNewEvent({ ...newEvent, prize2: e.target.value })} />
-                                </div>
-                                <div>
-                                    <span className="text-[10px] text-orange-400 block mb-1">المركز الثالث</span>
-                                    <input type="text" className="modal-input w-full text-center" placeholder="$250,000" value={newEvent.prize3} onChange={e => setNewEvent({ ...newEvent, prize3: e.target.value })} />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="mb-8">
-                            <label className="text-xs text-gray-400 mb-2 block font-bold flex items-center gap-2"><ImageIcon size={14} /> روابط الصور (URL)</label>
-                            <div className="grid grid-cols-2 gap-3">
-                                <input type="text" className="modal-input" placeholder="رابط صورة البطاقة (عريض)" value={newEvent.cardImage} onChange={e => setNewEvent({ ...newEvent, cardImage: e.target.value })} />
-                                <input type="text" className="modal-input" placeholder="رابط صورة التفاصيل (اختياري)" value={newEvent.detailImage} onChange={e => setNewEvent({ ...newEvent, detailImage: e.target.value })} />
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
-                            <button className="px-6 py-3 rounded-lg hover:bg-white/5 transition-colors text-sm text-gray-400" onClick={() => setShowEventModal(false)}>إلغاء الأمر</button>
-                            <button className="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg font-bold hover:shadow-lg hover:shadow-purple-600/20 transition-all text-white flex items-center gap-2" onClick={handleCreateEvent}>
-                                <Radio size={16} className="animate-pulse" /> نشر الحدث الآن
-                            </button>
+                        <div className="modal-actions sticky-bottom">
+                            <button className="cancel-btn" onClick={() => setShowEventModal(false)}>إلغاء</button>
+                            <button className="confirm-btn primary" onClick={handleCreateEvent}>نشر الحدث</button>
                         </div>
                     </div>
                 </div>
             )}
 
             <style>{`
+                /* TABS */
                 .tab-btn {
-                    padding: 0.6rem 1.2rem;
-                    border-radius: 8px;
-                    font-size: 0.9rem;
-                    color: rgba(255,255,255,0.5);
-                    transition: all 0.3s ease;
-                    border: 1px solid transparent;
-                }
-                .tab-btn.active {
-                    background: rgba(147, 51, 234, 0.1);
-                    color: #d8b4fe;
-                    font-weight: bold;
-                    border-color: rgba(147, 51, 234, 0.3);
-                }
-                .tab-btn:hover:not(.active) {
-                    background: rgba(255,255,255,0.05);
-                    color: rgba(255,255,255,0.8);
-                }
-                .btn-icon {
-                    background: rgba(147, 51, 234, 0.1);
-                    color: #d8b4fe;
-                    border: 1px solid rgba(147, 51, 234, 0.3);
+                    background: transparent;
+                    border: none;
+                    color: var(--text-muted);
                     padding: 0.5rem 1rem;
                     border-radius: 8px;
+                    font-size: 0.85rem;
+                    cursor: pointer;
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
-                    font-size: 0.85rem;
-                    transition: all 0.3s;
+                    transition: 0.3s;
+                }
+                .tab-btn.active {
+                    background: rgba(255,255,255,0.1);
+                    color: white;
                     font-weight: 600;
                 }
-                .btn-icon:hover {
-                    background: rgba(147, 51, 234, 0.3);
-                    color: white;
-                    border-color: rgba(147, 51, 234, 0.6);
-                    box-shadow: 0 0 15px rgba(147, 51, 234, 0.2);
+
+                /* NEWS FEED */
+                .news-feed-container {
+                    position: relative;
+                    padding-left: 20px;
+                    padding-bottom: 50px;
                 }
-                .modal-input {
-                    background: rgba(0,0,0,0.3);
-                    border: 1px solid rgba(255,255,255,0.1);
-                    border-radius: 8px;
-                    padding: 0.8rem;
-                    color: white;
+                .feed-line {
+                    position: absolute;
+                    left: 9px;
+                    top: 0;
+                    bottom: 0;
+                    width: 2px;
+                    background: rgba(255,255,255,0.05);
+                }
+                .news-item-wrapper {
+                    position: relative;
+                    margin-bottom: 1.5rem;
+                }
+                .timeline-dot {
+                    position: absolute;
+                    left: -16px;
+                    top: 20px;
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    background: #000;
+                    border: 2px solid;
+                    z-index: 1;
+                    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+                }
+                .news-card {
+                    padding: 1rem;
+                    border: 1px solid var(--border-dim);
+                    background: rgba(255,255,255,0.02);
+                }
+                .news-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 0.75rem;
+                    border-bottom: 1px solid rgba(255,255,255,0.05);
+                    padding-bottom: 0.5rem;
+                }
+                .user-badge {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    border-left: 2px solid;
+                    padding-left: 0.5rem;
+                }
+                .avatar-placeholder {
+                    width: 20px; height: 20px;
+                    border-radius: 4px;
+                    display: flex; align-items: center; justify-content: center;
+                    font-size: 10px; font-weight: bold; color: white;
+                }
+                .username { font-size: 0.85rem; color: white; }
+                .timestamp { font-size: 0.7rem; color: var(--text-muted); opacity: 0.5; }
+                
+                .news-content {
+                    display: flex;
+                    gap: 0.75rem;
+                    align-items: flex-start;
+                }
+                .icon-wrapper {
+                    padding: 0.4rem;
+                    border-radius: 6px;
+                }
+                .message {
                     font-size: 0.9rem;
-                    transition: all 0.2s;
-                    outline: none;
+                    line-height: 1.5;
+                    color: #ddd;
+                    margin: 0;
                 }
-                .modal-input:focus {
-                    border-color: #9333ea;
-                    background: rgba(0,0,0,0.6);
-                    box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
+                .news-footer {
+                    margin-top: 0.75rem;
+                    display: flex;
+                    justify-content: flex-end;
                 }
-                .line-clamp-3 {
-                    display: -webkit-box;
-                    -webkit-line-clamp: 3;
-                    -webkit-box-orient: vertical;
+                .value-chip {
+                    background: rgba(255,255,255,0.05);
+                    padding: 0.2rem 0.6rem;
+                    border-radius: 4px;
+                    font-size: 0.75rem;
+                    display: flex;
+                    gap: 0.4rem;
+                }
+                .value-chip .label { opacity: 0.5; }
+                .value-chip .val { color: var(--success); }
+
+                /* EVENTS MODERN */
+                .create-event-btn {
+                    background: rgba(99, 102, 241, 0.1);
+                    color: var(--primary);
+                    border: 1px solid var(--primary);
+                    padding: 0.5rem 1rem;
+                    border-radius: 8px;
+                    font-size: 0.85rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    cursor: pointer;
+                    transition: 0.2s;
+                }
+                .create-event-btn:hover {
+                    background: var(--primary);
+                    color: white;
+                }
+
+                .event-card-modern {
+                    background: #0a0b10;
+                    border: 1px solid var(--border-dim);
+                    border-radius: 16px;
+                    overflow: hidden;
+                    transition: 0.3s;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .event-card-modern:hover {
+                    border-color: var(--primary);
+                    transform: translateY(-2px);
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                }
+                .card-image-wrapper {
+                    height: 180px;
+                    position: relative;
                     overflow: hidden;
                 }
+                .card-bg {
+                    width: 100%; height: 100%; object-fit: cover;
+                    transition: 0.5s;
+                }
+                .event-card-modern:hover .card-bg { transform: scale(1.05); }
+                .card-overlay {
+                    position: absolute; inset: 0;
+                    background: linear-gradient(0deg, #0a0b10 0%, transparent 100%);
+                }
+                .card-meta {
+                    position: absolute; bottom: 10px; right: 10px;
+                    display: flex; gap: 0.5rem;
+                }
+                .meta-badge {
+                    background: rgba(0,0,0,0.6);
+                    backdrop-filter: blur(4px);
+                    padding: 0.3rem 0.6rem;
+                    border-radius: 6px;
+                    font-size: 0.7rem;
+                    color: white;
+                    border: 1px solid rgba(255,255,255,0.1);
+                    display: flex; align-items: center; gap: 0.3rem;
+                }
+                .card-body {
+                    padding: 1.5rem;
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .event-title {
+                    font-size: 1.4rem;
+                    font-weight: 800;
+                    margin-bottom: 0.5rem;
+                    line-height: 1.2;
+                }
+                .event-desc {
+                    font-size: 0.85rem;
+                    color: var(--text-muted);
+                    line-height: 1.6;
+                    margin-bottom: 1.5rem;
+                    flex: 1;
+                }
+                .prizes-grid {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 0.5rem;
+                    margin-bottom: 1.5rem;
+                    background: rgba(255,255,255,0.02);
+                    padding: 0.75rem;
+                    border-radius: 10px;
+                }
+                .prize-item {
+                    text-align: center;
+                }
+                .prize-item .rank { font-size: 0.7rem; font-weight: bold; margin-bottom: 2px; }
+                .prize-item .amount { font-size: 0.8rem; font-weight: 700; color: white; }
+                .gold .rank { color: #ffd700; }
+                .silver .rank { color: #c0c0c0; }
+                .bronze .rank { color: #cd7f32; }
+
+                .join-btn {
+                    width: 100%;
+                    padding: 0.9rem;
+                    border-radius: 10px;
+                    border: none;
+                    font-weight: 700;
+                    cursor: pointer;
+                    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+                    background: white;
+                    color: black;
+                    transition: 0.2s;
+                }
+                .join-btn:hover { background: #eee; }
+                .join-btn.joined {
+                    background: rgba(16, 185, 129, 0.1);
+                    color: #10b981;
+                    border: 1px solid #10b981;
+                    cursor: default;
+                }
+
+                /* MODALS */
+                .modal-overlay {
+                    position: fixed; inset: 0;
+                    background: rgba(0,0,0,0.8);
+                    backdrop-filter: blur(5px);
+                    display: flex; align-items: center; justify-content: center;
+                    z-index: 2000;
+                    padding: 1rem;
+                }
+                .modal-content {
+                    background: #0f1016;
+                    border: 1px solid var(--border-dim);
+                    border-radius: 16px;
+                    padding: 1.5rem;
+                    width: 100%;
+                    max-width: 400px;
+                    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+                }
+                .create-event-modal { max-width: 600px; max-height: 90vh; overflow-y: auto; }
+                
+                .modal-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+                .modal-header h3 { font-size: 1.2rem; margin: 0; font-weight: 800; }
+                .modal-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+                
+                .auth-input {
+                    width: 100%;
+                    background: rgba(0,0,0,0.3);
+                    border: 1px solid var(--border-dim);
+                    padding: 1rem;
+                    color: white;
+                    text-align: center;
+                    font-size: 1.2rem;
+                    border-radius: 8px;
+                    outline: none;
+                    margin-bottom: 1.5rem;
+                    letter-spacing: 2px;
+                }
+                .auth-input:focus { border-color: var(--primary); }
+                
+                .modal-actions { display: flex; gap: 1rem; }
+                .modal-actions button { flex: 1; padding: 0.9rem; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; }
+                .confirm-btn { background: white; color: black; }
+                .cancel-btn { background: rgba(255,255,255,0.05); color: white; }
+                .confirm-btn.primary { background: var(--primary); color: white; }
+
+                .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+                .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+                .form-group.full { grid-column: 1 / -1; }
+                .form-group label { font-size: 0.75rem; opacity: 0.7; }
+                .form-group input, .form-group textarea {
+                    background: rgba(255,255,255,0.03);
+                    border: 1px solid var(--border-dim);
+                    padding: 0.75rem;
+                    border-radius: 8px;
+                    color: white;
+                    outline: none;
+                    font-family: inherit;
+                }
+                .form-group textarea { resize: vertical; min-height: 80px; }
+                .section-label { 
+                    font-size: 0.8rem; font-weight: bold; color: var(--primary); 
+                    display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-dim);
+                }
+                .sticky-bottom { 
+                    position: sticky; bottom: -1.5rem; background: #0f1016; 
+                    padding-top: 1rem; padding-bottom: 0; margin-top: 1rem; border-top: 1px solid var(--border-dim);
+                }
+                
                 .pulse-indicator {
-                    width: 8px;
-                    height: 8px;
-                    border-radius: 50%;
-                    position: relative;
+                    width: 8px; height: 8px; background: var(--danger);
+                    border-radius: 50%; box-shadow: 0 0 10px var(--danger);
+                    animation: pulse 2s infinite;
                 }
-                .pulse-indicator::after {
-                    content: '';
-                    position: absolute;
-                    inset: -3px;
-                    border-radius: 50%;
-                    border: 1.5px solid currentColor;
-                    animation: ripple 2s infinite;
-                }
-                @keyframes ripple {
-                    0% { transform: scale(1); opacity: 1; }
-                    100% { transform: scale(3); opacity: 0; }
-                }
-                @media (max-width: 768px) {
-                    .page-container { padding-bottom: 90px !important; }
-                    .events-feed { grid-template-columns: 1fr; }
-                }
+                @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+                .gold-text { color: #ffd700 !important; opacity: 1 !important; }
+                .silver-text { color: #c0c0c0 !important; opacity: 1 !important; }
+                .bronze-text { color: #cd7f32 !important; opacity: 1 !important; }
+                .text-danger { color: var(--danger); }
+                .text-primary { color: var(--primary); }
             `}</style>
         </div>
     );
