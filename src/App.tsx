@@ -19,12 +19,11 @@ import { Games } from './pages/Games';
 import { Marketplace } from './pages/Marketplace';
 import { Council } from './pages/Council';
 import { News } from './pages/News';
-
-
+import { GachaSystem } from './pages/Gacha/GachaSystem';
+import { Multiverse } from './pages/uni';
 import {
-  LayoutDashboard, ArrowRightLeft, Building2, LogOut, Sword,
-  Users, MessageSquare, TrendingUp, Map as MapIcon,
-  Pickaxe, Landmark, Store, Trophy, Gem, Zap, Crown, ShieldAlert, Newspaper, Menu, X
+  LayoutDashboard, MapIcon, TrendingUp, Building2, Sword, ArrowRightLeft, Users, MessageSquare, LogOut,
+  Pickaxe, Landmark, Store, Trophy, Gem, Zap, Crown, ShieldAlert, Newspaper, Menu, X, Target, Globe
 } from 'lucide-react';
 
 const EMERGENCY_MODE = false;
@@ -48,6 +47,8 @@ const navLinks = [
   { path: '/games', icon: <Trophy size={18} />, label: 'المنطقة' },
   { path: '/transfers', icon: <ArrowRightLeft size={18} />, label: 'التحويلات' },
   { path: '/accounts', icon: <Users size={18} />, label: 'الشبكة' },
+  { path: '/gacha', icon: <Target size={18} />, label: 'بروتوكول الوكلاء' },
+  { path: '/multiverse', icon: <Globe size={18} />, label: 'التصنيف الكوني' },
   { path: '/chat', icon: <MessageSquare size={18} />, label: 'الاتصالات' },
 ];
 
@@ -291,6 +292,8 @@ function App() {
             <Route path="/games" element={<Layout><Games /></Layout>} />
             <Route path="/council" element={<Layout><Council /></Layout>} />
             <Route path="/marketplace" element={<Layout><Marketplace /></Layout>} />
+            <Route path="/gacha" element={<Layout><GachaSystem /></Layout>} />
+            <Route path="/multiverse" element={<Layout><Multiverse /></Layout>} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </BrowserRouter>
