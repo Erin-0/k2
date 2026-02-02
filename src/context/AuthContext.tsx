@@ -90,8 +90,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 freshUser.weapons = data.ownedWeapons || [];
 
                 // 1. Earnings Logic
-                const lastCheck = data.lastEarningsCheck?.toDate() ? data.lastEarningsCheck.toDate() : new Date();
+                let lastCheck = data.lastEarningsCheck?.toDate();
                 const now = new Date();
+
+                if (!lastCheck) {
+                    await updateDoc(userRef, { lastEarningsCheck: serverTimestamp() });
+                    lastCheck = now;
+                }
+
                 const diffMs = now.getTime() - lastCheck.getTime();
                 const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
@@ -119,7 +125,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 freshUser.territories = territories;
 
                 // 3. Resource Generation Logic (+1 per tile per day)
-                const lastResourceClaim = data.lastResourceClaim?.toDate() || data.createdAt?.toDate() || new Date();
+                let lastResourceClaim = data.lastResourceClaim?.toDate();
+
+                if (!lastResourceClaim) {
+                    await updateDoc(userRef, { lastResourceClaim: serverTimestamp() });
+                    lastResourceClaim = now;
+                }
+
                 const diffDaysRes = Math.floor((now.getTime() - lastResourceClaim.getTime()) / 86400000);
 
                 if (diffDaysRes > 0) {
@@ -138,8 +150,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                             lastResourceClaim: serverTimestamp()
                         });
                         freshUser.resources = updatedRes;
-                    } else {
-                        await updateDoc(userRef, { lastResourceClaim: serverTimestamp() });
                     }
                 }
 
