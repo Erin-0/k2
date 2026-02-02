@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
-import { formatNeuralCurrency } from '../utils/formatters';
+
 
 
 import { doc, getDoc, updateDoc, serverTimestamp, collection, query, where, getDocs } from 'firebase/firestore';
@@ -89,33 +89,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 // Ensure weapons is synonymous with ownedWeapons
                 freshUser.weapons = data.ownedWeapons || [];
 
-                // 1. Earnings Logic
-                let lastCheck = data.lastEarningsCheck?.toDate();
+                // 1. Earnings Logic - MOVED TO MANUAL CLAIM IN COMPANIES.TSX
                 const now = new Date();
+                const lastCheck = data.lastEarningsCheck?.toDate();
 
                 if (!lastCheck) {
                     await updateDoc(userRef, { lastEarningsCheck: serverTimestamp() });
-                    lastCheck = now;
-                }
-
-                const diffMs = now.getTime() - lastCheck.getTime();
-                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-                if (diffDays > 0 && data.ownedCompanies && data.ownedCompanies.length > 0) {
-                    let totalEarned = 0;
-                    data.ownedCompanies.forEach((c: any) => {
-                        totalEarned += (parseFloat(c.dailyValue) || 0) * diffDays;
-                    });
-
-                    if (totalEarned > 0) {
-                        const newBalance = (data.balance || 0) + totalEarned;
-                        await updateDoc(userRef, {
-                            balance: newBalance,
-                            lastEarningsCheck: serverTimestamp()
-                        });
-                        freshUser.balance = newBalance;
-                        console.log(`Corporate Earnings: $${formatNeuralCurrency(totalEarned)}`);
-                    }
                 }
 
                 // 2. Territories Logic
