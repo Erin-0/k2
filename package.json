@@ -7,11 +7,13 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "clean-build": "rm -rf dist"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "browser-image-compression": "^2.0.2",
+    "framer-motion": "12.0.0",
     "firebase": "^12.7.0",
     "groq-sdk": "^0.37.0",
     "lightweight-charts": "^5.1.0",
